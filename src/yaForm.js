@@ -21,16 +21,30 @@ const YaForm = {
     validator: null,
     generator: null,
   },
-  submit({ formName, validator, schema }) {
-    const formValidator = validator || YaForm.config.validator;
-    if (!formValidator) {
-      throw new Error('No validator provided to submit function or set as default.');
+  submit({ formName, validator, schema, promise, onSubmit, onSuccess, onFailure, onValidation }) {
+    if (onSubmit !== false) {
+      const formValidator = validator || YaForm.config.validator;
+
+      if (!formValidator) {
+        throw new Error('A validator must be provided or set as default.');
+      }
+      if (!schema) {
+        throw new Error('A schema must be provided.');
+      }
+      if (!(promise instanceof Promise)) {
+        throw new Error('A promise must be provided');
+      }
+
+      const form = formToObj(formName);
+      if (onSubmit) onSubmit(formName, form);
+
+      const validation = formValidator(form, schema, Redux.store.dispatch, Redux.store.getState);
+      if (onValidation) onValidation(formName, form, validation);
+
+      if (!validation) {
+        // TODO How to handle a promise? Accept only promises or regular methods too? Throw exception?
+      }
     }
-    if (!schema) {
-      throw new Error('No schema provided to submit function.');
-    }
-    const form = formToObj(formName);
-    const validate = formValidator(form, schema, Redux.store.dispatch, Redux.store.getState);
   },
 };
 
