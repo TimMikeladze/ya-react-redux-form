@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import Redux from '../redux/redux';
+import YaForm from '../yaForm';
 import Submit from './Submit';
 
 const Form = ({
@@ -62,7 +62,7 @@ Form.defaultProps = {
 };
 
 const FormContainer = (props) => (
-  <Provider store={Redux.store}>
+  <Provider store={YaForm.config.store}>
     <Form {...props} />
   </Provider>
 );
