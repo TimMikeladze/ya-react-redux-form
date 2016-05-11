@@ -46,6 +46,9 @@ const YaForm = {
       }
     }
   },
+  setStore(store) {
+    Redux.store = store;
+  },
 };
 
 export default YaForm;

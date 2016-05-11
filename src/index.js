@@ -6,7 +6,9 @@ import Submit from './components/Submit';
 import YaWrap from './components/YaWrap';
 import YaForm from './yaForm';
 
-Redux.store = configureStore();
+if (!Redux.store) {
+  Redux.store = configureStore();
+}
 
 export { YaForm };
 
