@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import YaForm from '../yaForm';
-import YaWrap from './YaWrap';
+import Fields from './Fields';
 import Submit from './Submit';
 
 const Form = ({
@@ -21,7 +21,19 @@ const Form = ({
   return (
     <form name={name}>
       { React.Children.map(children, (child) => (
-        child instanceof YaWrap ? React.cloneElement(child, { formName: name }) : child
+        child.type === Fields ? React.cloneElement(child, {
+          formName: name,
+          method,
+          schema,
+          validator,
+          generator,
+          hasSubmitButton,
+          submitButton,
+          onSuccess,
+          onFailure,
+          onValidationError,
+          onFieldChange,
+        }) : child
       )) }
       {hasSubmitButton
         ? submitButton

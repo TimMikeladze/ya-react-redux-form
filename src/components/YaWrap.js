@@ -7,8 +7,14 @@ const YaWrap = InputComponent => {
     constructor(props) {
       super(props);
       this.wrapOnChange = this.wrapOnChange.bind(this);
-      const { formName, name, value } = props;
-      props.createField({ formName, name, value });
+    }
+    componentWillMount() {
+      const { formName, name, value } = this.props;
+      this.props.createField({ formName, name, value });
+    }
+    componentWillUnmount() {
+      const { formName, name } = this.props;
+      this.props.removeField({ formName, name });
     }
     wrapOnChange(value) {
       const { formName, name } = this.props;
@@ -33,6 +39,7 @@ const YaWrap = InputComponent => {
     onChange: React.PropTypes.func,
     fieldChanged: React.PropTypes.func.isRequired,
     createField: React.PropTypes.func.isRequired,
+    removeField: React.PropTypes.func.isRequired,
     callbackPropNames: React.PropTypes.shape({
       onChange: React.PropTypes.string,
     }),
@@ -49,6 +56,9 @@ const YaWrap = InputComponent => {
       FormActions.changeFieldValue({ formName, name, value })),
     createField: ({ formName, name, value }) => dispatch(
       FormActions.createField({ formName, name, value })
+    ),
+    removeField: ({ formName, name }) => dispatch(
+      FormActions.removeField({ formName, name })
     ),
   });
 
