@@ -22,6 +22,9 @@ const reducer = (state = {}, action = {}) => {
     case REMOVE_FIELD: {
       const nextState = objectAssignDeep({}, state);
       delete nextState[action.formName].fields[action.name];
+      if (Object.keys(nextState[action.formName].fields).length === 0) {
+        delete nextState[action.formName];
+      }
       return nextState;
     }
     case CREATE_FIELD:
