@@ -82,11 +82,13 @@ const YaForm = {
             reject({ err, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState });
           });
         } else {
+          // Else no method provided
           resolve(
             { name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
           );
         }
       } else {
+        // Validation failed
         reject(
           { validationResults, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
         );
