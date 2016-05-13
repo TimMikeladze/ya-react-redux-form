@@ -6,7 +6,7 @@ const YaWrap = InputComponent => {
   class Wrapper extends React.Component {
     constructor(props) {
       super(props);
-      this.wrapOnChange = this.wrapOnChange.bind(this);
+      this.wraphandleChange = this.wraphandleChange.bind(this);
       this.getFormName = this.getFormName.bind(this);
     }
     componentWillMount() {
@@ -28,18 +28,18 @@ const YaWrap = InputComponent => {
       }
       return this.context.formName || this.props.formName;
     }
-    wrapOnChange(value) {
+    wraphandleChange(value) {
       const { name } = this.props;
       const formName = this.getFormName();
       this.props.fieldChanged({ formName, name, value });
-      if (this.props[this.props.callbackPropNames.onChange]) {
-        this.props[this.props.callbackPropNames.onChange](value);
+      if (this.props[this.props.callbackPropNames.handleChange]) {
+        this.props[this.props.callbackPropNames.handleChange](value);
       }
     }
     render() {
       const newProps = {
         ...this.props,
-        [this.props.callbackPropNames.onChange]: this.wrapOnChange,
+        [this.props.callbackPropNames.handleChange]: this.wraphandleChange,
       };
       return <InputComponent {...newProps} />;
     }
@@ -49,18 +49,18 @@ const YaWrap = InputComponent => {
     name: React.PropTypes.string.isRequired,
     formName: React.PropTypes.string,
     value: React.PropTypes.string,
-    onChange: React.PropTypes.func,
+    handleChange: React.PropTypes.func,
     fieldChanged: React.PropTypes.func.isRequired,
     createField: React.PropTypes.func.isRequired,
     removeField: React.PropTypes.func.isRequired,
     callbackPropNames: React.PropTypes.shape({
-      onChange: React.PropTypes.string,
+      handleChange: React.PropTypes.string,
     }),
   };
 
   Wrapper.defaultProps = {
     callbackPropNames: {
-      onChange: 'onChange',
+      handleChange: 'handleChange',
     },
   };
 
