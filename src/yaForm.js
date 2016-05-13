@@ -17,11 +17,6 @@ const YaForm = {
       // Use the configured validator if no validator provided
       const formValidator = validator || YaForm.config.validator;
 
-      // Validate required arguments
-      if (!formValidator) {
-        // reject('A `validator` key must be provided or set as default.');
-      }
-
       // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
         const formState = YaForm.getState().yaForm[name];
