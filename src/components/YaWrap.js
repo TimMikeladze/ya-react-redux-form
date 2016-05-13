@@ -37,9 +37,13 @@ const YaWrap = InputComponent => {
       }
     }
     render() {
+      const formName = this.getFormName();
+      const name = this.props.name;
       const newProps = {
         ...this.props,
         [this.props.callbackPropNames.handleChange]: this.wraphandleChange,
+        hasError: this.props.hasError({ formName, name }),
+        error: this.props.error({ formName, name }),
       };
       return <InputComponent {...newProps} />;
     }
@@ -53,6 +57,8 @@ const YaWrap = InputComponent => {
     fieldChanged: React.PropTypes.func.isRequired,
     createField: React.PropTypes.func.isRequired,
     removeField: React.PropTypes.func.isRequired,
+    hasError: React.PropTypes.func.isRequired,
+    error: React.PropTypes.func.isRequired,
     callbackPropNames: React.PropTypes.shape({
       handleChange: React.PropTypes.string,
     }),
@@ -68,6 +74,23 @@ const YaWrap = InputComponent => {
     formName: React.PropTypes.string,
   };
 
+  const mapStateToProps = (state) => ({
+    hasError: ({ formName, name }) => {
+      if (state.yaForm.hasOwnProperty(formName)
+        && state.yaForm[formName].fields.hasOwnProperty(name)) {
+        return state.yaForm[formName].fields[name].hasError;
+      }
+      return false;
+    },
+    error: ({ formName, name }) => {
+      if (state.yaForm.hasOwnProperty(formName)
+        && state.yaForm[formName].fields.hasOwnProperty(name)) {
+        return state.yaForm[formName].fields[name].error;
+      }
+      return undefined;
+    },
+  });
+
   const mapDispatchToProps = (dispatch) => ({
     fieldChanged: ({ formName, name, value }) => dispatch(
       FormActions.changeFieldValue({ formName, name, value })),
@@ -79,7 +102,7 @@ const YaWrap = InputComponent => {
     ),
   });
 
-  return connect(null, mapDispatchToProps)(Wrapper);
+  return connect(mapStateToProps, mapDispatchToProps)(Wrapper);
 };
 
 export default YaWrap;

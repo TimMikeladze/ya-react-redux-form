@@ -30,6 +30,7 @@ const reducer = (state = {}, action = {}) => {
           fields: {
             [action.name]: {
               value: action.value,
+              hasError: false,
             },
           },
         },
