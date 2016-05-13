@@ -7,17 +7,30 @@ const YaWrap = InputComponent => {
     constructor(props) {
       super(props);
       this.wrapOnChange = this.wrapOnChange.bind(this);
+      this.getFormName = this.getFormName.bind(this);
     }
     componentWillMount() {
-      const { formName, name, value } = this.props;
+      const { name, value } = this.props;
+      const formName = this.getFormName();
       this.props.createField({ formName, name, value });
     }
     componentWillUnmount() {
-      const { formName, name } = this.props;
+      const { name } = this.props;
+      const formName = this.getFormName();
       this.props.removeField({ formName, name });
     }
+    getFormName() {
+      if (!(this.props.formName instanceof String)
+       && (this.context === undefined
+           || (this.context && !this.context.hasOwnProperty('formName'))
+         )) {
+        throw new Error('A formName prop or a formName context type must be provided to YaWrap');
+      }
+      return this.context.formName || this.props.formName;
+    }
     wrapOnChange(value) {
-      const { formName, name } = this.props;
+      const { name } = this.props;
+      const formName = this.getFormName();
       this.props.fieldChanged({ formName, name, value });
       if (this.props[this.props.callbackPropNames.onChange]) {
         this.props[this.props.callbackPropNames.onChange](value);
@@ -49,6 +62,10 @@ const YaWrap = InputComponent => {
     callbackPropNames: {
       onChange: 'onChange',
     },
+  };
+
+  Wrapper.contextTypes = {
+    formName: React.PropTypes.string,
   };
 
   const mapDispatchToProps = (dispatch) => ({
