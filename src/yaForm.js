@@ -12,6 +12,29 @@ const YaForm = {
     YaForm.getState = store.getState;
     YaForm.dispatch = store.dispatch;
   },
+  getForm(form) {
+    let returnValue;
+    if (YaForm.getState().yaForm.hasOwnProperty(form)) {
+      returnValue = YaForm.getState().yaForm[form];
+    }
+    return returnValue;
+  },
+  getFormField(form, field) {
+    let returnValue;
+    if (YaForm.getState().yaForm.hasOwnProperty(form)
+      && YaForm.getState().yaForm[form].fields.hasOwnProperty(field)) {
+      returnValue = YaForm.getState().yaForm[form].fields[field];
+    }
+    return returnValue;
+  },
+  getFormError(form) {
+    let returnValue;
+    if (YaForm.getState().yaForm.hasOwnProperty(form)
+      && YaForm.getState().yaForm[form].hasOwnProperty('error')) {
+      returnValue = YaForm.getState().yaForm[form].error;
+    }
+    return returnValue;
+  },
   submit({ name, validator, schema, method, onSubmit, onSuccess, onFailure, onValidation }) {
     const promise = new Promise((resolve, reject) => {
       // Use the configured validator if no validator provided
@@ -36,13 +59,13 @@ const YaForm = {
       if (onSubmit) {
         onSubmit({ name, form, dispatch: YaForm.dispatch, getState: YaForm.getState });
       }
-
       // Validate the form. formValidator returns undefined if there are no validation errors.
       let validationResults;
       if (formValidator) {
         validationResults = formValidator(
-          { name, form, schema, dispatch: YaForm.dispatch, getState: YaForm.getState }
+          { name, form, schema, method, dispatch: YaForm.dispatch, getState: YaForm.getState }
         );
+        debugger;
       }
       // Run onValidation callback
       if (onValidation) {

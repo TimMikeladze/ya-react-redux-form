@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as FormActions from '../redux/modules';
+import YaForm from '../yaForm';
 
 const YaWrap = InputComponent => {
   class Wrapper extends React.Component {
@@ -74,20 +75,20 @@ const YaWrap = InputComponent => {
     formName: React.PropTypes.string,
   };
 
-  const mapStateToProps = (state) => ({
+  const mapStateToProps = () => ({
     hasError: ({ formName, name }) => {
-      if (state.yaForm.hasOwnProperty(formName)
-        && state.yaForm[formName].fields.hasOwnProperty(name)) {
-        return state.yaForm[formName].fields[name].hasError;
+      const field = YaForm.getFormField(formName, name);
+      if (field) {
+        return field.hasError;
       }
       return false;
     },
     error: ({ formName, name }) => {
-      if (state.yaForm.hasOwnProperty(formName)
-        && state.yaForm[formName].fields.hasOwnProperty(name)) {
-        return state.yaForm[formName].fields[name].error;
+      const field = YaForm.getFormField(formName, name);
+      if (field) {
+        return field.error;
       }
-      return undefined;
+      return false;
     },
   });
 
