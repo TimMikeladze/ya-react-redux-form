@@ -1,12 +1,8 @@
 // TODO Improve validation
 const YaForm = {
   config: {
-    validator: null,
-    generator: null,
-    store: null,
+
   },
-  getState: null,
-  dispatch: null,
   setStore(store) {
     YaForm.config.store = store;
     YaForm.getState = store.getState;
@@ -35,7 +31,9 @@ const YaForm = {
     }
     return returnValue;
   },
-  submit({ name, validator, schema, method, onSubmit, onSuccess, onFailure, onValidation }) {
+  submit({
+    name, validator, schema, method, handleSubmit, handleSuccess, handleFailure, handleValidation,
+  }) {
     const promise = new Promise((resolve, reject) => {
       // Use the configured validator if no validator provided
       const formValidator = validator || YaForm.config.validator;
@@ -55,68 +53,46 @@ const YaForm = {
         return obj;
       })();
 
+
+      // These parameters are always passed to the callback
+      const baseCallbackArgs = {
+        name, form, schema, method, dispatch: YaForm.dispatch, getState: YaForm.getState,
+      };
+
       // Run onSubmit callback
-      if (onSubmit) {
-        onSubmit({ name, form, dispatch: YaForm.dispatch, getState: YaForm.getState });
-      }
-      // Validate the form. formValidator returns undefined if there are no validation errors.
-      let validationResults;
-      if (formValidator) {
-        validationResults = formValidator(
-          { name, form, schema, method, dispatch: YaForm.dispatch, getState: YaForm.getState }
-        );
-        debugger;
-      }
-      // Run onValidation callback
-      if (onValidation) {
-        onValidation(
-          { name, form, validationResults,
-            dispatch: YaForm.dispatch, getState: YaForm.getState }
-        );
+      if (handleSubmit) {
+        const err = handleSubmit(baseCallbackArgs);
+        if (err) {
+          handleFailure({ err, ...baseCallbackArgs });
+          reject({ err, ...baseCallbackArgs });
+        }
       }
 
-      // If validation passed run provided method
-      if (!validationResults) {
-        if (method instanceof Function) {
-          // Run the method
-          const methodPromise = method(
-            { name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
-          );
-          // Require method to return a Promise
-          if (!(methodPromise instanceof Promise)) {
-            reject('method must return a Promise');
-          }
-          // Handle promise
-          methodPromise.then(result => {
-            // Run onSuccess callback
-            if (onSuccess) {
-              onSuccess(
-                { result, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
-              );
-            }
-            resolve({ result, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState });
-          }).catch(err => {
-            // Run onFailure callback
-            if (onFailure) {
-              onFailure(
-                { err, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
-              );
-            }
-            reject({ err, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState });
-          });
-        } else {
-          // Else no method provided
-          resolve(
-            { name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
-          );
+      // Validate the form.
+      if (formValidator) {
+        const err = formValidator(baseCallbackArgs);
+        if (err) {
+          handleValidation({ err, ...baseCallbackArgs });
+          reject({ err, ...baseCallbackArgs });
         }
+      }
+
+      // Run method callback
+      if (method instanceof Function) {
+        // Promisify the callback results
+        Promise.resolve(method(baseCallbackArgs)).then(result => {
+          handleSuccess({ result, ...baseCallbackArgs });
+          resolve({ result, ...baseCallbackArgs });
+        }).catch(err => {
+          handleFailure({ err, ...baseCallbackArgs });
+          reject({ err, ...baseCallbackArgs });
+        });
       } else {
-        // Validation failed
-        reject(
-          { validationResults, name, form, dispatch: YaForm.dispatch, getState: YaForm.getState }
-        );
+        handleSuccess(...baseCallbackArgs);
+        resolve(baseCallbackArgs);
       }
     });
+
     return promise;
   },
 };

@@ -7,7 +7,7 @@ const YaWrap = InputComponent => {
   class Wrapper extends React.Component {
     constructor(props) {
       super(props);
-      this.wraphandleChange = this.wraphandleChange.bind(this);
+      this.wrapHandleChange = this.wrapHandleChange.bind(this);
       this.getFormName = this.getFormName.bind(this);
     }
     componentWillMount() {
@@ -29,7 +29,7 @@ const YaWrap = InputComponent => {
       }
       return this.context.formName || this.props.formName;
     }
-    wraphandleChange(value) {
+    wrapHandleChange(value) {
       const { name } = this.props;
       const formName = this.getFormName();
       this.props.fieldChanged({ formName, name, value });
@@ -42,9 +42,8 @@ const YaWrap = InputComponent => {
       const name = this.props.name;
       const newProps = {
         ...this.props,
-        [this.props.callbackPropNames.handleChange]: this.wraphandleChange,
-        hasError: this.props.hasError({ formName, name }),
-        error: this.props.error({ formName, name }),
+        [this.props.callbackPropNames.handleChange]: this.wrapHandleChange,
+        field: this.props.field({ formName, name }),
       };
       return <InputComponent {...newProps} />;
     }
@@ -56,10 +55,9 @@ const YaWrap = InputComponent => {
     value: React.PropTypes.string,
     handleChange: React.PropTypes.func,
     fieldChanged: React.PropTypes.func.isRequired,
+    field: React.PropTypes.object,
     createField: React.PropTypes.func.isRequired,
     removeField: React.PropTypes.func.isRequired,
-    hasError: React.PropTypes.func.isRequired,
-    error: React.PropTypes.func.isRequired,
     callbackPropNames: React.PropTypes.shape({
       handleChange: React.PropTypes.string,
     }),
@@ -76,20 +74,7 @@ const YaWrap = InputComponent => {
   };
 
   const mapStateToProps = () => ({
-    hasError: ({ formName, name }) => {
-      const field = YaForm.getFormField(formName, name);
-      if (field) {
-        return field.hasError;
-      }
-      return false;
-    },
-    error: ({ formName, name }) => {
-      const field = YaForm.getFormField(formName, name);
-      if (field) {
-        return field.error;
-      }
-      return false;
-    },
+    field: ({ formName, name }) => YaForm.getFormField(formName, name),
   });
 
   const mapDispatchToProps = (dispatch) => ({
