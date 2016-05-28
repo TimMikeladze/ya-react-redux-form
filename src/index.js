@@ -8,7 +8,7 @@ if (!YaForm.config.store) {
   YaForm.setStore(configureStore());
 }
 
-export { YaForm };
+export default YaForm ;
 
 export { reducer, FormActions };
 

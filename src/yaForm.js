@@ -15,7 +15,7 @@ const YaForm = {
     }
     return returnValue;
   },
-  getFormField(form, field) {
+  getField(form, field) {
     let returnValue;
     if (YaForm.getState().yaForm.hasOwnProperty(form)
       && YaForm.getState().yaForm[form].fields.hasOwnProperty(field)) {
@@ -23,7 +23,7 @@ const YaForm = {
     }
     return returnValue;
   },
-  getFormError(form) {
+  getError(form) {
     let returnValue;
     if (YaForm.getState().yaForm.hasOwnProperty(form)
       && YaForm.getState().yaForm[form].hasOwnProperty('error')) {
@@ -34,6 +34,14 @@ const YaForm = {
   submit({
     name, validator, schema, method, handleSubmit, handleSuccess, handleFailure, handleValidation,
   }) {
+    // name is required
+    if (typeof name !== 'string' || name.length === 0) {
+      throw new Error('Expects a name.');
+    }
+    // an object with this name must be in the store
+    if (!YaForm.getState().yaForm.hasOwnProperty(name)) {
+      throw new Error(`${name} does not exist in the store.`);
+    }
     const promise = new Promise((resolve, reject) => {
       // Use the configured validator if no validator provided
       const formValidator = validator || YaForm.config.validator;
@@ -60,18 +68,18 @@ const YaForm = {
       };
 
       // Run onSubmit callback
-      if (handleSubmit) {
+      if (handleSubmit instanceof Function) {
         const err = handleSubmit(baseCallbackArgs);
-        if (err) {
+        if (err !== undefined) {
           handleFailure({ err, ...baseCallbackArgs });
           reject({ err, ...baseCallbackArgs });
         }
       }
 
       // Validate the form.
-      if (formValidator) {
+      if (formValidator instanceof Function) {
         const err = formValidator(baseCallbackArgs);
-        if (err) {
+        if (err !== undefined) {
           handleValidation({ err, ...baseCallbackArgs });
           reject({ err, ...baseCallbackArgs });
         }
@@ -81,14 +89,20 @@ const YaForm = {
       if (method instanceof Function) {
         // Promisify the callback results
         Promise.resolve(method(baseCallbackArgs)).then(result => {
-          handleSuccess({ result, ...baseCallbackArgs });
-          resolve({ result, ...baseCallbackArgs });
-        }).catch(err => {
+          if (result === undefined) {
+            handleSuccess({ result, ...baseCallbackArgs });
+            resolve({ result, ...baseCallbackArgs });
+          } else {
+            reject({ err: result, ...baseCallbackArgs });
+          }
+        }, err => {
           handleFailure({ err, ...baseCallbackArgs });
           reject({ err, ...baseCallbackArgs });
         });
       } else {
-        handleSuccess(...baseCallbackArgs);
+        if (handleSuccess instanceof Function) {
+          handleSuccess(...baseCallbackArgs);
+        }
         resolve(baseCallbackArgs);
       }
     });
