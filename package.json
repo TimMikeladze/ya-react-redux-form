@@ -36,8 +36,7 @@
     "eslint": "^2.10.2",
     "eslint-config-airbnb": "^6.1.0",
     "eslint-plugin-react": "^4.2.3",
-    "mocha": "^2.5.3",
-    "redux": "^3.5.2"
+    "mocha": "^2.5.3"
   },
   "eslintConfig": {
     "parser": "babel-eslint",
