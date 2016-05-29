@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint src/ test/",
     "pretest": "npm run lint --silent",
-    "test": "npm run testonly",
-    "testonly": "mocha test/index.js",
+    "test": "npm run test-only",
+    "test-only": "mocha test/index.js",
     "prepublish": "babel ./src --ignore test --out-dir ./dist",
     "postinstall": "npm dedupe"
   },
