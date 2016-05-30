@@ -1,6 +1,6 @@
 import YaFormConfig from './YaFormConfig';
 
-interface YaFormbaseCallbackArgs {
+interface YaFormBaseCallbackArgs {
   name: string,
   form: Object,
   schema?: Function,
@@ -82,7 +82,7 @@ class YaForm implements YaFormInterface {
        return obj;
      })();
 
-     const baseCallbackArgs: YaFormbaseCallbackArgs = {
+     const baseCallbackArgs: YaFormBaseCallbackArgs = {
        name: this.name,
        form: form,
        schema: this.schema,
