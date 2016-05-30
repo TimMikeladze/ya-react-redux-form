@@ -1,28 +1,18 @@
 import YaFormConfig from './YaFormConfig';
 
 interface YaFormBaseCallbackArgs {
-  name: string,
-  form: Object,
-  schema?: Function,
-  dispatch: Function,
-  state: Function,
-}
-
-interface YaFormInterface {
-  name: string,
-  store: {
-    getState?: Function,
-    dispatch?: Function,
-  }
-}
-
-export { YaFormInterface };
-
-class YaForm implements YaFormInterface {
   name: string;
-  store: {
-    getState?: Function,
-    dispatch?: Function,
+  form: Object;
+  schema?: Function;
+  dispatch: Function;
+  state: Function;
+}
+
+class YaForm {
+  private name: string;
+  private store: {
+    getState?: Function;
+    dispatch?: Function;
   };
   private validator: Function;
   private method: Function;
@@ -37,35 +27,35 @@ class YaForm implements YaFormInterface {
     // TODO Use configureStore if neither option exists
     this.store = store || YaFormConfig.store;
   }
-  setValidator(validator: Function): YaForm {
+  public setValidator(validator: Function): YaForm {
     this.validator = validator;
     return this;
   }
-  setMethod(method: Function): YaForm {
+  public setMethod(method: Function): YaForm {
     this.method = method;
     return this;
   }
-  setOnSubmit(onSubmit: Function): YaForm {
+  public setOnSubmit(onSubmit: Function): YaForm {
     this.onSubmit = onSubmit;
     return this;
   }
-  setOnSuccess(onSuccess: Function): YaForm {
+  public setOnSuccess(onSuccess: Function): YaForm {
     this.onSuccess = onSuccess;
     return this;
   }
-  setOnFailure(onFailure: Function): YaForm {
+  public setOnFailure(onFailure: Function): YaForm {
     this.onFailure = onFailure;
     return this;
   }
-  setOnValidation(onValidation: Function): YaForm {
+  public setOnValidation(onValidation: Function): YaForm {
     this.onValidation = onValidation;
     return this;
   }
-  setSchema(schema: Function): YaForm {
+  public setSchema(schema: Function): YaForm {
     this.schema = schema;
     return this;
   }
-  submit(): Promise<string> {
+  public submit(): Promise<string> {
     const promise = new Promise<string>((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
      const form = (() => {
@@ -129,7 +119,6 @@ class YaForm implements YaFormInterface {
   });
 
   return promise;
-
   }
 }
 

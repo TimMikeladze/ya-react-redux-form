@@ -1,15 +1,15 @@
 interface YaFormConfigInterface {
-  store?: Object,
-  validator?: Function,
-  setStore(store: Object) : void,
+  store?: Object;
+  validator?: Function;
+  setStore(store: Object): void;
 };
 
 export { YaFormConfigInterface };
 
-const YaFormConfig : YaFormConfigInterface = {
+const yaFormConfig: YaFormConfigInterface = {
   setStore(store: Object) {
-    YaFormConfig.store = store;
+    yaFormConfig.store = store;
   },
 };
 
-export default YaFormConfig;
+export default yaFormConfig;
