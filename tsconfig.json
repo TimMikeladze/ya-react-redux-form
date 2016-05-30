@@ -16,8 +16,12 @@
     "src/**/.ts",
     "test/**/.ts"
   ],
-  "files": [],
+  "files": [
+    "typings/main/index.d.ts",
+    "src/index.ts",
+    "test/tests.ts"
+  ],
   "atom": {
-    "rewriteTsconfig": true
+    "rewriteTsconfig": false
   }
 }
