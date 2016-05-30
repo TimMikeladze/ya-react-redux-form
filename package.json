@@ -2,19 +2,22 @@
   "name": "ya-react-form",
   "version": "0.0.1",
   "description": "Yet Another React Form",
-  "main": "src/index.js",
+  "main": "./lib/src/index.js",
+  "typings": "./lib/src/index.d.ts",
   "scripts": {
-    "lint": "eslint src/ test/",
-    "pretest": "npm run lint --silent",
-    "test": "npm run test-only",
-    "test-only": "mocha test/index.js",
-    "prepublish": "babel ./src --ignore test --out-dir ./dist",
-    "postinstall": "npm dedupe"
+    "compile": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c ./tslint.json -e test/fixtures/**/*.ts src/**/*.ts test/**/*.ts",
+    "typings:install": "typings install",
+    "testonly": "mocha lib/test/tests.js",
+    "test": "npm run testonly",
+    "posttest": "npm run lint",
+    "prepublish": "rm -rf npm run compile",
+    "postinstall": "typings install && npm dedupe"
   },
   "author": "Tim Mikeladze",
   "license": "MIT",
   "dependencies": {
-    "babel-polyfill": "^6.9.0",
     "object-assign-deep": "0.0.4",
     "react-redux": "^4.4.5",
     "react": "^15.0.2",
@@ -22,35 +25,13 @@
     "redux": "^3.5.2"
   },
   "devDependencies": {
-    "babel": "^6.5.2",
-    "babel-cli": "^6.8.0",
-    "babel-core": "^6.9.0",
-    "babel-eslint": "^6.0.4",
-    "babel-preset-es2015": "^6.6.0",
-    "babel-preset-react": "^6.5.0",
-    "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "chai-spies": "^0.7.1",
-    "eslint": "^2.10.2",
-    "eslint-config-airbnb": "^6.1.0",
-    "eslint-plugin-react": "^4.2.3",
-    "mocha": "^2.5.3"
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module"
-    },
-    "plugins": [
-      "react"
-    ],
-    "extends": [
-      "airbnb"
-    ],
-    "env": {
-      "mocha": true
-    }
+    "es6-promise": "^3.2.1",
+    "mocha": "^2.5.3",
+    "tslint": "^3.10.2",
+    "typescript": "^1.8.10",
+    "typings": "^1.0.4"
   }
 }
