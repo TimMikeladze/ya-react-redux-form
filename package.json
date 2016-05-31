@@ -10,7 +10,7 @@
     "lint": "tslint -c ./tslint.json -e test/fixtures/**/*.ts src/**/*.ts test/**/*.ts",
     "typings:install": "typings install",
     "testonly": "mocha lib/test/tests.js",
-    "test": "npm run testonly",
+    "test": "npm run compile && npm run testonly",
     "posttest": "npm run lint",
     "prepublish": "rm -rf npm run compile",
     "postinstall": "typings install && npm dedupe"
