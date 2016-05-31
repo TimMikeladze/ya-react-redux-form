@@ -10,7 +10,8 @@
     "outDir": "lib",
     "allowSyntheticDefaultImports": true,
     "pretty": true,
-    "removeComments": true
+    "removeComments": true,
+    "jsx": "react"
   },
   "files": [
     "typings/main/index.d.ts",

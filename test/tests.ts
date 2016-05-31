@@ -1,2 +1,3 @@
 import './YaForm';
-import './modules';
+import './redux/modules';
+import './components/Form';

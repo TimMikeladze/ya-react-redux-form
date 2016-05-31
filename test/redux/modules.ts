@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import configureStore from '../src/redux/configureStore';
+import configureStore from '../../src/redux/configureStore';
 import {
   createForm, removeForm, addField, removeField, changeField,
-} from '../src/redux/modules';
+} from '../../src/redux/modules';
 
 
 describe('Store', () => {
