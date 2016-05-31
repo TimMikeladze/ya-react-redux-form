@@ -19,10 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "object-assign-deep": "0.0.4",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
-    "react": "^15.0.2",
-    "redux-thunk": "^2.0.1",
-    "redux": "^3.5.2"
+    "redux": "^3.5.2",
+    "redux-thunk": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
