@@ -64,7 +64,12 @@ const reducer = (state: IState = {}, action: IAction): IState => {
             break;
         case REMOVE_FIELD:
             nextState = objectAssignDeep({}, state);
-            delete nextState[action.payload.form].fields[action.payload.fieldName];
+            if (state.hasOwnProperty(action.payload.form)
+              && state[action.payload.form].hasOwnProperty('fields')
+              && state[action.payload.form].fields[action.payload.fieldName]
+            ) {
+              delete nextState[action.payload.form].fields[action.payload.fieldName];
+            }
             break;
         case CHANGE_FIELD:
             nextState = objectAssignDeep({}, state, {
@@ -107,19 +112,14 @@ const removeForm = (name: string): IAction => (
 
 export { removeForm };
 
-const addField = (form: string, fieldName: string, field?: IField): Function => (
-    (dispatch, getState) => {
-        if (!getState().yaForm.hasOwnProperty(form)) {
-            dispatch(createForm(form));
-        }
-        dispatch({
-            type: ADD_FIELD,
-            payload: {
-                form,
-                fieldName,
-                field,
-            },
-        });
+const addField = (form: string, fieldName: string, field?: IField): IAction => (
+    {
+        type: ADD_FIELD,
+        payload: {
+            form,
+            fieldName,
+            field,
+        },
     }
 );
 
@@ -146,20 +146,14 @@ const removeField = (form: string, fieldName: string): Function => (
 
 export { removeField };
 
-const changeField = (form: string, fieldName: string, field: IField) => (
-    (dispatch, getState) => {
-        if (!getState().yaForm[form].hasOwnProperty('fields')
-            || !getState().yaForm[form].fields.hasOwnProperty(fieldName)) {
-            dispatch(addField(form, fieldName));
-        }
-        dispatch({
-            type: CHANGE_FIELD,
-            payload: {
-                form,
-                fieldName,
-                field,
-            },
-        });
+const changeField = (form: string, fieldName: string, field: IField): IAction => (
+    {
+        type: CHANGE_FIELD,
+        payload: {
+            form,
+            fieldName,
+            field,
+        },
     }
 );
 
