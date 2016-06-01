@@ -4,24 +4,23 @@ import { PropTypes } from 'react';
 const yaWrap = (field) => {
     class Wrapper extends React.Component<any, any> {
         public static contextTypes = {
-            name: PropTypes.string,
+            form: PropTypes.string,
         };
         public static propTypes = {
-          //name: PropTypes.string.isRequired,
-          value: PropTypes.string,
+          element: PropTypes.element.isRequired,
         };
         constructor(props) {
             super(props);
             this.getFormName = this.getFormName.bind(this);
         }
         public componentWillMount() {
-            //const { name, value } = this.props;
-            //const formName = this.getFormName();
+            const { name, value } = this.props.element.props;
+            const form = this.getFormName();
             //this.props.createField({ formName, name, value });
         }
         public componentWillUnmount() {
-            //const { name } = this.props;
-            //const formName = this.getFormName();
+            const { name } = this.props.element.props;
+            const form = this.getFormName();
             //this.props.removeField({ formName, name });
         }
         public render() {
@@ -31,14 +30,15 @@ const yaWrap = (field) => {
             );
         }
         private getFormName() {
-            if (!(this.props.formName instanceof String)
-                && (this.context === undefined || (this.context && !this.context.hasOwnProperty('formName')))) {
-                throw new Error('A formName prop or a formName context type must be provided to YaWrap');
-            }
-            return this.props.formName || (this.context as any).name;
+          if ((this.props.element.props.form === undefined || this.props.element.props.form.length === 0)
+            && ((this.context as any).form === undefined || (this.context as any).form.length === 0)) {
+            throw new Error('A form prop or a form context type must be provided to YaWrap');
+          }
+          return this.props.element.props.form || (this.context as any).form;
         }
     };
-    return <Wrapper />;
+
+    return <Wrapper element={field} />;
 };
 
 export default yaWrap;

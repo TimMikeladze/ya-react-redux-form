@@ -7,11 +7,11 @@ class Form extends React.Component<any, any> {
     children: PropTypes.node,
   };
   public static childContextTypes = {
-    name: PropTypes.string.isRequired,
+    form: PropTypes.string.isRequired,
   };
   public getChildContext() {
     return {
-      name: this.props.name,
+      form: this.props.name,
     };
   }
   public render() {
