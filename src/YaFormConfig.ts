@@ -1,13 +1,15 @@
-interface YaFormConfigInterface {
-  store?: Object;
+import { Store } from 'redux';
+
+interface IYaFormConfigInterface {
+  store?: Store;
   validator?: Function;
-  setStore(store: Object): void;
+  setStore(store: Store): void;
 };
 
-export { YaFormConfigInterface };
+export { IYaFormConfigInterface };
 
-const yaFormConfig: YaFormConfigInterface = {
-  setStore(store: Object) {
+const yaFormConfig: IYaFormConfigInterface = {
+  setStore(store: Store) {
     yaFormConfig.store = store;
   },
 };
