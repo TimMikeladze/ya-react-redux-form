@@ -16,6 +16,20 @@
   "files": [
     "typings/main/index.d.ts",
     "src/index.ts",
-    "test/tests.ts"
-   ]
+    "src/redux/configureStore.ts",
+    "src/redux/modules.ts",
+    "src/YaForm.ts",
+    "src/YaFormConfig.ts",
+    "test/redux/modules.ts",
+    "test/tests.ts",
+    "test/YaForm.ts"
+  ],
+  "filesGlob": [
+    "typings/main/index.d.ts",
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  }
 }
