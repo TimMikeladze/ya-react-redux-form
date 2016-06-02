@@ -1,140 +1,128 @@
-import objectAssignDeep from 'object-assign-deep';
+const objectAssignDeep = require('object-assign-deep');
 
-const CREATE_FIELD = 'ya-react-form/CREATE_FIELD';
+const CREATE_FORM = 'ya-react-form/CREATE_FORM';
+const REMOVE_FORM = 'ya-react-form/REMOVE_FORM';
+const ADD_FIELD = 'ya-react-form/ADD_FIELD';
 const REMOVE_FIELD = 'ya-react-form/REMOVE_FIELD';
-const CHANGE_FIELD_VALUE = 'ya-react-form/CHANGE_FIELD_VALUE';
+const CHANGE_FIELD = 'ya-react-form/CHANGE_FIELD';
 const SUBMIT_FORM = 'ya-react-form/SUBMIT_FORM';
 const ERROR = 'ya-react-form/ERROR';
 const INVALIDATED_FIELD = 'ya-react-form/INVALIDATED_FIELD';
 
-const reducer = (state = {}, action = {}) => {
+
+const reducer = (state = {}, action) => {
+  let nextState;
   switch (action.type) {
-    case SUBMIT_FORM: {
-      const nextState = objectAssignDeep({}, state);
-      // Clear form level error
-      if (nextState[action.formName].hasOwnProperty('error')) {
-        delete nextState[action.formName].error;
+    case CREATE_FORM:
+      nextState = objectAssignDeep({}, state, {
+        [action.payload.name]: action.payload.form || {},
+      });
+      break;
+    case REMOVE_FORM:
+      nextState = objectAssignDeep({}, state);
+      delete nextState[action.payload.name];
+      break;
+    case ADD_FIELD:
+      nextState = objectAssignDeep({}, state, {
+        [action.payload.form]: {
+          fields: {
+            [action.payload.fieldName]: action.payload.field || { value: '' },
+          },
+        },
+      });
+      break;
+    case REMOVE_FIELD:
+      nextState = objectAssignDeep({}, state);
+      if (state.hasOwnProperty(action.payload.form)
+              && state[action.payload.form].hasOwnProperty('fields')
+              && state[action.payload.form].fields[action.payload.fieldName]
+            ) {
+        delete nextState[action.payload.form].fields[action.payload.fieldName];
       }
-      // Clear field level errors
-      nextState[action.formName] = nextState[action.formName].fields.forEach(field => (
-        {
-          value: field.value,
-          hasError: false,
-        }
-      ));
-      return nextState;
-    }
-    case CHANGE_FIELD_VALUE:
-      return objectAssignDeep({}, state, {
-        [action.formName]: {
+      break;
+    case CHANGE_FIELD:
+      nextState = objectAssignDeep({}, state, {
+        [action.payload.form]: {
           fields: {
-            [action.name]: {
-              value: action.value,
-              hasError: false,
-            },
+            [action.payload.fieldName]: action.payload.field,
           },
         },
       });
-    case REMOVE_FIELD: {
-      const nextState = objectAssignDeep({}, state);
-      delete nextState[action.formName].fields[action.name];
-      if (Object.keys(nextState[action.formName].fields).length === 0) {
-        delete nextState[action.formName];
-      }
-      return nextState;
-    }
-    case CREATE_FIELD:
-      return objectAssignDeep({}, state, {
-        [action.formName]: {
-          fields: {
-            [action.name]: {
-              value: action.value,
-              hasError: false,
-            },
-          },
-        },
-      });
-    case ERROR:
-      return objectAssignDeep({}, state, {
-        [action.formName]: {
-          error: action.reason,
-        },
-      });
-    case INVALIDATED_FIELD:
-      return objectAssignDeep({}, state, {
-        [action.formName]: {
-          fields: {
-            [action.name]: {
-              error: action.reason,
-              hasError: true,
-            },
-          },
-        },
-      });
+      break;
     default:
       return state;
   }
+
+  return nextState;
 };
 
 export default reducer;
 
-const createField = ({ formName, name, value = '' }) => (
+const createForm = (name: string, form) => (
   {
-    type: CREATE_FIELD,
-    formName,
-    name,
-    value,
+    type: CREATE_FORM,
+    payload: {
+      name,
+      form,
+    },
   }
 );
 
-export { createField };
+export { createForm };
 
-const removeField = ({ formName, name }) => (
+const removeForm = (name) => (
   {
-    type: REMOVE_FIELD,
-    formName,
-    name,
+    type: REMOVE_FORM,
+    payload: {
+      name,
+    },
   }
 );
+
+export { removeForm };
+
+const addField = (form, fieldName, field) => (
+  {
+    type: ADD_FIELD,
+    payload: {
+      form,
+      fieldName,
+      field,
+    },
+  }
+);
+
+export { addField };
+
+const removeField = (form, fieldName) =>
+    (dispatch, getState) => {
+      if (!getState().yaForm.hasOwnProperty(form)) {
+        throw new Error(`form ${form} does not exist in the yaForm state`);
+      }
+      if (!getState().yaForm[form].hasOwnProperty('fields')
+            || !getState().yaForm[form].fields.hasOwnProperty(fieldName)) {
+        throw new Error(`field ${fieldName} does not exist in ${form}`);
+      }
+      dispatch({
+        type: REMOVE_FIELD,
+        payload: {
+          form,
+          fieldName,
+        },
+      });
+    };
 
 export { removeField };
 
-const changeFieldValue = ({ formName, name, value }) => (
+const changeField = (form, fieldName, field) => (
   {
-    type: CHANGE_FIELD_VALUE,
-    formName,
-    name,
-    value,
-  }
-);
-export { changeFieldValue };
-
-const submitForm = ({ formName }) => (dispatch) => {
-  dispatch({
-    type: SUBMIT_FORM,
-    formName,
-  });
-};
-
-export { submitForm };
-
-const error = ({ formName, reason }) => (
-  {
-    type: ERROR,
-    formName,
-    reason,
+    type: CHANGE_FIELD,
+    payload: {
+      form,
+      fieldName,
+      field,
+    },
   }
 );
 
-export { error };
-
-const invalidateField = ({ formName, name, reason }) => (
-  {
-    type: INVALIDATED_FIELD,
-    formName,
-    name,
-    reason,
-  }
-);
-
-export { invalidateField };
+export { changeField };

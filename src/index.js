@@ -1,15 +1,7 @@
-import reducer, * as FormActions from './redux/modules';
+import YaFormConfig from './YaFormConfig';
+import YaForm from './YaForm';
 import configureStore from './redux/configureStore';
 import Form from './components/Form';
-import YaWrap from './components/YaWrap';
-import YaForm from './yaForm';
+import yaWrap from './components/yaWrap';
 
-if (!YaForm.config.store) {
-  YaForm.setStore(configureStore());
-}
-
-export default YaForm ;
-
-export { reducer, FormActions };
-
-export { Form, YaWrap };
+export { YaFormConfig, YaForm, configureStore, Form, yaWrap };
