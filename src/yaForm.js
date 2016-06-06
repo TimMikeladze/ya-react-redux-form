@@ -1,7 +1,7 @@
 import YaFormConfig from './YaFormConfig';
 
 class YaForm {
-  constructor(name: string, store?: Object) {
+  constructor(name, store) {
     this.name = name;
     // TODO Use configureStore if neither option exists?
     this.store = store || YaFormConfig.store;
@@ -34,7 +34,7 @@ class YaForm {
     this.schema = schema;
     return this;
   }
-  submit(): Promise<string> {
+  submit() {
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
@@ -61,7 +61,7 @@ class YaForm {
 
      // Run onSubmit
       if (this.onSubmit) {
-        const err: any = this.onSubmit(baseCallbackArgs);
+        const err = this.onSubmit(baseCallbackArgs);
         if (err) {
           this.onFailure(err, baseCallbackArgs);
           reject(Object.assign({}, err, baseCallbackArgs));
@@ -70,7 +70,7 @@ class YaForm {
 
      // Validator the form
       if (this.validator) {
-        const err: any = this.validator(baseCallbackArgs);
+        const err = this.validator(baseCallbackArgs);
         if (err) {
           this.onFailure(err, baseCallbackArgs);
           reject(Object.assign({}, err, baseCallbackArgs));

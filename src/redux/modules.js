@@ -58,7 +58,7 @@ const reducer = (state = {}, action) => {
 
 export default reducer;
 
-const createForm = (name: string, form) => (
+const createForm = (name, form) => (
   {
     type: CREATE_FORM,
     payload: {
