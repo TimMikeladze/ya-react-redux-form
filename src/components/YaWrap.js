@@ -1,4 +1,6 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import YaFormConfig from '../YaFormConfig';
 
 const yaWrap = (field) => {
   class Wrapper extends React.Component {
@@ -40,7 +42,11 @@ const yaWrap = (field) => {
     form: React.PropTypes.string,
   };
 
-  return <Wrapper element={field} />;
+  return (
+    <Provider store={YaFormConfig.store}>
+      <Wrapper element={field} />
+    </Provider>
+  );
 };
 
 export default yaWrap;

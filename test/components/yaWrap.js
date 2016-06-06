@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-expressions */
 import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import yaWrap from '../../src/components/yaWrap';
 import Form from '../../src/components/Form';
+import configureStore from '../../src/redux/configureStore';
+import YaFormConfig from '../../src/YaFormConfig';
 import * as jsdom from 'jsdom';
 
 const doc = jsdom.jsdom('<!doctype html><html><body></body></html>');
@@ -20,6 +23,17 @@ class Field extends React.Component {
 }
 
 describe('WrappedField', () => {
+  let store;
+  let dispatch;
+  let getState;
+
+  beforeEach(() => {
+    store = configureStore();
+    dispatch = store.dispatch;
+    getState = () => store.getState().yaForm;
+    YaFormConfig.setStore(store);
+  });
+
   it('does something', () => {
     // const wrapper = mount(yaWrap(<Field name='field1' value='value1' form='form1'/>));
   });

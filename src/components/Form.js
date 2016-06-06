@@ -1,8 +1,6 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import YaFormConfig from '../YaFormConfig';
 
-class Form extends React.Component<any, any> {
+class Form extends React.Component {
   getChildContext() {
     return {
       form: this.props.name,
@@ -10,13 +8,11 @@ class Form extends React.Component<any, any> {
   }
   render() {
     return (
-      <Provider store={(YaFormConfig.store)}>
         <form name={this.props.name}
           className={this.props.className ? this.props.className : 'ya-react-form'}
         >
           {this.props.children}
         </form>
-      </Provider>
     );
   }
 }
