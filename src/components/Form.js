@@ -1,6 +1,5 @@
 import React from 'react';
-import { connect, Provider } from 'react-redux';
-import YaFormConfig from '../YaFormConfig';
+import { connect } from 'react-redux';
 import { createForm, removeForm } from '../redux/modules';
 
 class Form extends React.Component {
@@ -43,12 +42,4 @@ const mapDispatchToProps = (dispatch) => ({
   removeForm: (name) => dispatch(removeForm(name)),
 });
 
-const FormConnect = (props) => <div>{connect(null, mapDispatchToProps, () => props)(Form)}</div>;
-
-const FormProvider = (props) => (
-  <Provider store={YaFormConfig.store}>
-    <FormConnect {...props} />
-  </Provider>
-);
-
-export default FormProvider;
+export default connect(null, mapDispatchToProps)(Form);

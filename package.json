@@ -2,7 +2,7 @@
   "name": "ya-react-form",
   "version": "0.0.1",
   "description": "Yet Another React Form",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "eslint src/ test/",
     "pretest": "npm run lint --silent",
