@@ -16,7 +16,12 @@ class Wrapper extends React.Component {
   componentWillUnmount() {
     const { name } = this.props.element.props; // eslint-disable-line react/prop-types
     const form = this.getFormName();
-    this.props.removeField(form, name);
+    // Hacky way to handle race condition of form being removed first resulting in the removal
+    // of all the fields under it.
+    try {
+      this.props.removeField(form, name);
+    } catch (e) { // eslint-disable-line no-empty
+    }
   }
   onChange(e) {
     const { name, onChange } = this.props.element.props; // eslint-disable-line react/prop-types
