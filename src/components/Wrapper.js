@@ -11,7 +11,7 @@ class Wrapper extends React.Component {
   componentWillMount() {
     const { name, value } = this.props.element.props; // eslint-disable-line react/prop-types
     const form = this.getFormName();
-    this.props.addField(form, name, value);
+    this.props.addField(form, name, { value });
   }
   componentWillUnmount() {
     const { name } = this.props.element.props; // eslint-disable-line react/prop-types

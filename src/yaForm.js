@@ -3,7 +3,6 @@ import YaFormConfig from './YaFormConfig';
 class YaForm {
   constructor(name, store) {
     this.name = name;
-    // TODO Use configureStore if neither option exists?
     this.store = store || YaFormConfig.store;
   }
   setValidator(validator) {
@@ -38,7 +37,7 @@ class YaForm {
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
-        const formState = this.store.getState().yaForm[name];
+        const formState = this.store.getState().yaForm[this.name];
         const obj = {};
         if (formState.hasOwnProperty('fields')) {
           const fields = formState.fields;
@@ -101,4 +100,4 @@ class YaForm {
   }
 }
 
-export { YaForm };
+export default YaForm;

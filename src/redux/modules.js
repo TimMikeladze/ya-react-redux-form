@@ -5,9 +5,9 @@ const REMOVE_FORM = 'ya-react-form/REMOVE_FORM';
 const ADD_FIELD = 'ya-react-form/ADD_FIELD';
 const REMOVE_FIELD = 'ya-react-form/REMOVE_FIELD';
 const CHANGE_FIELD = 'ya-react-form/CHANGE_FIELD';
-const SUBMIT_FORM = 'ya-react-form/SUBMIT_FORM';
-const ERROR = 'ya-react-form/ERROR';
-const INVALIDATED_FIELD = 'ya-react-form/INVALIDATED_FIELD';
+// const SUBMIT_FORM = 'ya-react-form/SUBMIT_FORM';
+// const ERROR = 'ya-react-form/ERROR';
+// const INVALIDATED_FIELD = 'ya-react-form/INVALIDATED_FIELD';
 
 
 const reducer = (state = {}, action) => {

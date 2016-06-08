@@ -1,19 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import React from 'react';
 import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
-import yaWrap from '../../src/components/yaWrap';
-import Form from '../../src/components/Form';
-import configureStore from '../../src/redux/configureStore';
-import YaFormConfig from '../../src/YaFormConfig';
-import * as jsdom from 'jsdom';
+import { mount } from 'enzyme';
+import { yaWrap, Form, configureStore, YaFormConfig } from '../../src/';
 
-const doc = jsdom.jsdom('<!doctype html><html><body></body></html>');
-const win = doc.defaultView;
-global.document = doc;
-global.window = win;
-
-class Field extends React.Component {
+class Field extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
     return (
       <div>
@@ -22,31 +13,29 @@ class Field extends React.Component {
   }
 }
 
+const WrappedField = (props) => yaWrap(<Field {...props} />);
+
 describe('WrappedField', () => {
   let store;
-  let dispatch;
-  let getState;
 
   beforeEach(() => {
     store = configureStore();
-    dispatch = store.dispatch;
-    getState = () => store.getState().yaForm;
     YaFormConfig.setStore(store);
   });
 
   it('does something', () => {
     // const wrapper = mount(yaWrap(<Field name='field1' value='value1' form='form1'/>));
   });
+
   it('must be rendered within a form context or provided a form prop', () => {
-    expect(() => mount(yaWrap(<Field name="field1" />)))
+    expect(() => mount(<WrappedField name="field1" />))
       .to.throw('A form prop or a form context type must be provided to YaWrap');
 
-    expect(() => mount(yaWrap(<Field name="field1" form="form1" />))).to.be.ok;
+    expect(() => mount(<WrappedField name="field1" form="form1" />)).to.be.ok;
 
-    const yaWrappedField = yaWrap(<Field name="field1" />);
     expect(() => mount(
         <Form name="form1">
-          { mount(yaWrappedField) }
+          <WrappedField name="field1" />
         </Form>
       )).to.be.ok;
   });
