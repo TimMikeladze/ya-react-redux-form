@@ -1,8 +1,7 @@
-import YaFormConfig from './YaFormConfig';
-
 class YaForm {
-  constructor(store) {
-    this.store = store || YaFormConfig.store;
+  constructor(dispatch, state) {
+    this.dispatch = dispatch;
+    this.state = state;
   }
   setValidator(validator) {
     this.validator = validator;
@@ -36,7 +35,7 @@ class YaForm {
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
-        const formState = this.store.yaForm[name];
+        const formState = this.state.yaForm[name];
         const obj = {};
         if (formState.hasOwnProperty('fields')) {
           const fields = formState.fields;
@@ -53,8 +52,8 @@ class YaForm {
         name,
         form,
         schema: this.schema,
-        dispatch: this.store.dispatch,
-        state: this.store.getState,
+        dispatch: this.dispatch,
+        state: this.state,
       };
 
      // Run onSubmit
@@ -82,7 +81,7 @@ class YaForm {
             this.onSuccess(result, baseCallbackArgs);
           }
           resolve(Object.assign({}, result, baseCallbackArgs));
-        }, err => {
+        }).catch(err => {
           if (this.onFailure) {
             this.onFailure(err, baseCallbackArgs);
           }
