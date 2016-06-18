@@ -9,6 +9,7 @@ const SET_FORM_ERROR = 'ya-react-form/SET_FORM_ERROR';
 const CLEAR_FORM_ERROR = 'ya-react-form/CLEAR_FORM_ERROR';
 const SET_FIELD_ERROR = 'ya-react-form/SET_FIELD_ERROR';
 const CLEAR_FIELD_ERROR = 'ya-react-form/CLEAR_FIELD_ERROR';
+const SUBMIT_FORM = 'ya-react-form/SUBMIT_FORM';
 
 const reducer = (state = {}, action) => {
   let nextState;
@@ -78,6 +79,7 @@ const reducer = (state = {}, action) => {
       nextState = objectAssignDeep({}, state);
       delete nextState[action.payload.form].fields[action.payload.field].error;
       return nextState;
+    case SUBMIT_FORM:
     default:
       return state;
   }
@@ -204,3 +206,14 @@ const clearFieldError = (form, field) => (
 );
 
 export { clearFieldError };
+
+const submitForm = (form) => (
+  {
+    type: SUBMIT_FORM,
+    payload: {
+      form,
+    },
+  }
+);
+
+export { submitForm };

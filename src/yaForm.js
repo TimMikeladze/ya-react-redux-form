@@ -1,3 +1,5 @@
+import { submitForm } from './redux/modules';
+
 class YaForm {
   constructor(dispatch, state) {
     this.dispatch = dispatch;
@@ -32,6 +34,8 @@ class YaForm {
     return this;
   }
   submit(name) {
+    this.dispatch(submitForm(name));
+
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
