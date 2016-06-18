@@ -219,7 +219,7 @@ describe('Store', () => {
     });
   });
 
-  it('can set a field error and change the field value', () => {
+  it('can preserve error on field change', () => {
     dispatch(createForm('form1', {
       fields: {
         field1: {
@@ -240,7 +240,7 @@ describe('Store', () => {
     });
     dispatch(changeField('form1', 'field1', {
       value: 'value2',
-    }));
+    }, true));
     expect(getState()).to.deep.equal({
       form1: {
         fields: {

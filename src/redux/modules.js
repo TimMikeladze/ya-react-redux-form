@@ -10,11 +10,6 @@ const CLEAR_FORM_ERROR = 'ya-react-form/CLEAR_FORM_ERROR';
 const SET_FIELD_ERROR = 'ya-react-form/SET_FIELD_ERROR';
 const CLEAR_FIELD_ERROR = 'ya-react-form/CLEAR_FIELD_ERROR';
 
-// const SUBMIT_FORM = 'ya-react-form/SUBMIT_FORM';
-// const ERROR = 'ya-react-form/ERROR';
-// const INVALIDATED_FIELD = 'ya-react-form/INVALIDATED_FIELD';
-
-
 const reducer = (state = {}, action) => {
   let nextState;
   switch (action.type) {
@@ -53,6 +48,9 @@ const reducer = (state = {}, action) => {
           },
         },
       });
+      if (!action.payload.preserveError) {
+        delete nextState[action.payload.form].fields[action.payload.fieldName].error;
+      }
       break;
     case SET_FORM_ERROR:
       nextState = objectAssignDeep({}, state, {
@@ -145,13 +143,14 @@ const removeField = (form, fieldName) =>
 
 export { removeField };
 
-const changeField = (form, fieldName, field) => (
+const changeField = (form, fieldName, field, preserveError = false) => (
   {
     type: CHANGE_FIELD,
     payload: {
       form,
       fieldName,
       field,
+      preserveError,
     },
   }
 );
