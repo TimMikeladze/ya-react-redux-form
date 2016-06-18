@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { addField, removeField, changeField } from '../redux/modules';
+import YaForm from '../yaForm';
 
 class Wrapper extends React.Component {
   constructor(props) {
@@ -39,7 +40,14 @@ class Wrapper extends React.Component {
     return this.props.element.props.form || this.context.form;
   }
   render() {
-    return React.cloneElement(this.props.element, { onChange: this.onChange });
+    const formName = this.getFormName();
+    const fieldName = this.props.element.props.name;
+    const state = this.props.state;
+    return React.cloneElement(this.props.element, {
+      onChange: this.onChange,
+      hasError: YaForm.hasFormError(state, formName, fieldName),
+      error: YaForm.getFormError(state, formName, fieldName),
+    });
   }
 }
 
@@ -48,11 +56,17 @@ Wrapper.propTypes = {
   addField: React.PropTypes.func.isRequired,
   removeField: React.PropTypes.func.isRequired,
   changeField: React.PropTypes.func.isRequired,
+  state: React.PropTypes.object.isRequired,
 };
 
 Wrapper.contextTypes = {
   form: React.PropTypes.string,
 };
+
+// TODO Should not be passing state. Issue that form name not accessible in this scope.
+const mapStateToProps = (state) => ({
+  state,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   addField: (form, name, value) => dispatch(addField(form, name, value)),
@@ -60,4 +74,4 @@ const mapDispatchToProps = (dispatch) => ({
   changeField: (form, fieldName, field) => dispatch(changeField(form, fieldName, field)),
 });
 
-export default connect(null, mapDispatchToProps)(Wrapper);
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);
