@@ -52,7 +52,7 @@ class YaForm {
         return obj;
       })();
 
-      const baseCallbackArgs = {
+      const args = {
         name,
         form,
         schema: this.schema,
@@ -61,40 +61,41 @@ class YaForm {
       };
 
      // Run onSubmit
-      if (this.onSubmit) {
-        const err = this.onSubmit(baseCallbackArgs);
+      if (this.onSubmit instanceof Function) {
+        const err = this.onSubmit(args);
         if (err) {
-          this.onFailure(err, baseCallbackArgs);
-          reject(Object.assign({}, err, baseCallbackArgs));
+          this.onFailure(err, args);
+          reject({ err, args });
         }
       }
 
      // Validator the form
-      if (this.validator) {
-        const err = this.validator(baseCallbackArgs);
+      if (this.validator instanceof Function) {
+        const err = this.validator(args);
         if (err) {
-          this.onFailure(err, baseCallbackArgs);
-          reject(Object.assign({}, err, baseCallbackArgs));
+          this.onFailure(err, args);
+          reject({ err, args });
         }
       }
 
-      if (this.method) {
+      if (this.method instanceof Function) {
        // Promisify the callback results
-        Promise.resolve(this.method(baseCallbackArgs)).then(result => {
-          if (this.onSuccess) {
-            this.onSuccess(result, baseCallbackArgs);
+        Promise.resolve(this.method(args)).then(result => {
+          if (this.onSuccess instanceof Function) {
+            this.onSuccess(result, args);
           }
-          resolve(Object.assign({}, result, baseCallbackArgs));
+          resolve({ result, args });
         }).catch(err => {
-          if (this.onFailure) {
-            this.onFailure(err, baseCallbackArgs);
+          if (this.onFailure instanceof Function) {
+            this.onFailure(err, args);
           }
-          reject(Object.assign({}, err, baseCallbackArgs));
+          reject({ err, args });
         });
       } else {
-        if (this.onSuccess) {
-          this.onSuccess(baseCallbackArgs);
+        if (this.onSuccess instanceof Function) {
+          this.onSuccess(null, args);
         }
+        resolve({ result: null, args });
       }
     });
 
