@@ -45,8 +45,8 @@ class Wrapper extends React.Component {
     const state = this.props.state;
     return React.cloneElement(this.props.element, {
       onChange: this.onChange,
-      hasError: YaForm.hasFormError(state, formName, fieldName),
-      error: YaForm.getFormError(state, formName, fieldName),
+      hasError: YaForm.hasFieldError(state, formName, fieldName),
+      error: YaForm.getFieldError(state, formName, fieldName),
     });
   }
 }
