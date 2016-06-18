@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { configureStore } from '../../src/';
 import {
   createForm, removeForm, addField, removeField, changeField,
+  setFormError, setFieldError, clearFormError, clearFieldError,
 } from '../../src/redux/modules';
 
 
@@ -150,6 +151,102 @@ describe('Store', () => {
         fields: {
           field1: {
             value: 'value1',
+          },
+        },
+      },
+    });
+  });
+
+  it('can set a form error', () => {
+    dispatch(createForm('form1'));
+    dispatch(setFormError('form1', 'error'));
+    expect(getState()).to.deep.equal({
+      form1: {
+        error: 'error',
+      },
+    });
+  });
+
+  it('can clear a form error', () => {
+    dispatch(createForm('form1'));
+    dispatch(setFormError('form1', 'error'));
+    dispatch(clearFormError('form1'));
+    expect(getState()).to.deep.equal({
+      form1: {
+      },
+    });
+  });
+
+  it('can set a field error', () => {
+    dispatch(createForm('form1', {
+      fields: {
+        field1: {
+          value: 'value1',
+        },
+      },
+    }));
+    dispatch(setFieldError('form1', 'field1', 'error'));
+    expect(getState()).to.deep.equal({
+      form1: {
+        fields: {
+          field1: {
+            value: 'value1',
+            error: 'error',
+          },
+        },
+      },
+    });
+  });
+
+  it('can clear a field error', () => {
+    dispatch(createForm('form1', {
+      fields: {
+        field1: {
+          value: 'value1',
+        },
+      },
+    }));
+    dispatch(setFieldError('form1', 'field1', 'error'));
+    dispatch(clearFieldError('form1', 'field1'));
+    expect(getState()).to.deep.equal({
+      form1: {
+        fields: {
+          field1: {
+            value: 'value1',
+          },
+        },
+      },
+    });
+  });
+
+  it('can set a field error and change the field value', () => {
+    dispatch(createForm('form1', {
+      fields: {
+        field1: {
+          value: 'value1',
+        },
+      },
+    }));
+    dispatch(setFieldError('form1', 'field1', 'error'));
+    expect(getState()).to.deep.equal({
+      form1: {
+        fields: {
+          field1: {
+            value: 'value1',
+            error: 'error',
+          },
+        },
+      },
+    });
+    dispatch(changeField('form1', 'field1', {
+      value: 'value2',
+    }));
+    expect(getState()).to.deep.equal({
+      form1: {
+        fields: {
+          field1: {
+            value: 'value2',
+            error: 'error',
           },
         },
       },
