@@ -1,8 +1,6 @@
-import YaFormConfig from './YaFormConfig';
-
-class YaForm {
+class FormHandler {
   constructor(store) {
-    this.store = store || YaFormConfig.store;
+    this.store = store;
   }
   setValidator(validator) {
     this.validator = validator;
@@ -99,4 +97,4 @@ class YaForm {
   }
 }
 
-export default YaForm;
+export default FormHandler;

@@ -1,7 +1,7 @@
-import YaForm from './yaForm';
+import FormHandler from './FormHandler';
 import Form from './components/Form';
-import yaWrap from './components/yaWrap';
+import wrap from './wrap';
 import reducer from './redux/modules';
 import * as Actions from './redux/modules';
 
-export { YaForm, Form, yaWrap, reducer, Actions };
+export { FormHandler, Form, wrap, reducer, Actions };

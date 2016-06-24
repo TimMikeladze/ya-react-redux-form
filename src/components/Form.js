@@ -27,6 +27,9 @@ class Form extends React.Component {
     if (this.props.onSubmit) {
       this.props.onSubmit(event);
     }
+    if (this.props.afterSubmit) {
+      this.props.afterSubmit(event);
+    }
   }
   render() {
     return (
@@ -46,6 +49,7 @@ Form.propTypes = {
   className: React.PropTypes.string,
   onSubmit: React.PropTypes.func,
   beforeSubmit: React.PropTypes.func,
+  afterSubmit: React.PropTypes.func,
 };
 
 Form.contextTypes = {
