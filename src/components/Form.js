@@ -16,7 +16,7 @@ class Form extends React.Component {
   }
   render() {
     return (
-        <form name={this.props.name}
+        <form name={this.props.name} onSubmit={this.props.onSubmit}
           className={this.props.className ? this.props.className : 'ya-react-form'}
         >
           {this.props.children}
@@ -31,6 +31,7 @@ Form.propTypes = {
   className: React.PropTypes.string,
   createForm: React.PropTypes.func.isRequired,
   removeForm: React.PropTypes.func.isRequired,
+  onSubmit: React.PropTypes.func,
 };
 
 Form.childContextTypes = {
