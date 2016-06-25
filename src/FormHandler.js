@@ -1,9 +1,6 @@
-import { submitForm } from './redux/modules';
-
-class YaForm {
-  constructor(dispatch, state) {
-    this.dispatch = dispatch;
-    this.state = state;
+class FormHandler {
+  constructor(store) {
+    this.store = store;
   }
   setValidator(validator) {
     this.validator = validator;
@@ -103,19 +100,4 @@ class YaForm {
   }
 }
 
-YaForm.hasFormError = (state, form) => !!YaForm.getFormError(state, form);
-
-/* eslint-disable max-len */
-YaForm.getFormError = (state, form) => state.yaForm.hasOwnProperty(form) // eslint-disable-line no-confusing-arrow
-  && state.yaForm[form].hasOwnProperty('error') ? state.yaForm[form].error : undefined;
-
-YaForm.hasFieldError = (state, form, field) => !!YaForm.getFieldError(state, form, field);
-
-YaForm.getFieldError = (state, form, field) => state.yaForm.hasOwnProperty(form) // eslint-disable-line no-confusing-arrow
-  && state.yaForm[form].hasOwnProperty('fields')
-  && state.yaForm[form].fields.hasOwnProperty(field)
-  && state.yaForm[form].fields[field].hasOwnProperty('error')
-  ? state.yaForm[form].fields[field].error : undefined;
-
-
-export default YaForm;
+export default FormHandler;
