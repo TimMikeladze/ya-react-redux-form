@@ -1,6 +1,9 @@
+import 'whatwg-fetch';
+
 class FormHandler {
-  constructor(store) {
-    this.store = store;
+  constructor(dispatch, getState) {
+    this.dispatch = dispatch;
+    this.getState = getState;
   }
   setValidator(validator) {
     this.validator = validator;
@@ -31,12 +34,10 @@ class FormHandler {
     return this;
   }
   submit(name) {
-    this.dispatch(submitForm(name));
-
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
-        const formState = this.state.yaForm[name];
+        const formState = this.getState().yaForm[name];
         const obj = {};
         if (formState.hasOwnProperty('fields')) {
           const fields = formState.fields;
@@ -54,7 +55,7 @@ class FormHandler {
         form,
         schema: this.schema,
         dispatch: this.dispatch,
-        state: this.state,
+        getState: this.getState,
       };
 
      // Run onSubmit
