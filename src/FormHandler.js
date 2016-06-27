@@ -1,5 +1,3 @@
-import 'whatwg-fetch';
-
 class FormHandler {
   constructor(dispatch, getState) {
     this.dispatch = dispatch;
