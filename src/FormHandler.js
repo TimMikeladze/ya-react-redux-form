@@ -1,7 +1,10 @@
+import FormRegistry from './FormRegistry';
+
 class FormHandler {
-  constructor(dispatch, getState) {
+  constructor({ dispatch, getState, name }) {
     this.dispatch = dispatch;
     this.getState = getState;
+    this.name = name;
   }
   setValidator(validator) {
     this.validator = validator;
@@ -31,11 +34,11 @@ class FormHandler {
     this.schema = schema;
     return this;
   }
-  submit(name) {
+  submit() {
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = (() => {
-        const formState = this.getState().yaForm[name];
+        const formState = this.getState().yaForm[this.name];
         const obj = {};
         if (formState.hasOwnProperty('fields')) {
           const fields = formState.fields;
@@ -49,7 +52,7 @@ class FormHandler {
       })();
 
       const args = {
-        name,
+        name: this.name,
         form,
         schema: this.schema,
         dispatch: this.dispatch,
@@ -98,5 +101,7 @@ class FormHandler {
     return promise;
   }
 }
+
+FormHandler.submit = (name) => FormRegistry.get(name).submit(name);
 
 export default FormHandler;

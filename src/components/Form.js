@@ -2,13 +2,16 @@ import React from 'react';
 import { createForm, removeForm } from '../redux/modules';
 import storeShape from '../util/storeShape';
 import FormHandler from '../FormHandler';
+import FormRegistry from '../FormRegistry';
 
 class Form extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.store = props.store || context.store;
+    const { dispatch, getState } = this.store;
+    const { name } = this.props;
     this.submit = this.submit.bind(this);
-    this.handler = this.props.handler || new FormHandler(this.store.dispatch, this.store.getState);
+    this.handler = this.props.handler || new FormHandler({ dispatch, getState, name });
 
     if (this.props.onSubmit) {
       this.handler.setOnSubmit(this.props.onSubmit);
@@ -29,9 +32,11 @@ class Form extends React.Component {
     };
   }
   componentWillMount() {
+    FormRegistry.add(this.props.name, this.handler);
     this.store.dispatch(createForm(this.props.name));
   }
   componentWillUnmount() {
+    FormRegistry.remove(this.props.name);
     this.store.dispatch(removeForm(this.props.name));
   }
   submit(event) {
