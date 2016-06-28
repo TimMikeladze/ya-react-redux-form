@@ -166,7 +166,7 @@ const setFormError = (form, error) => (
       form,
       error,
     },
-  },
+  }
 );
 
 export { setFormError };
@@ -190,7 +190,7 @@ const setFieldError = (form, field, error) => (
       field,
       error,
     },
-  },
+  }
 );
 
 export { setFieldError };
