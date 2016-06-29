@@ -7,8 +7,8 @@ const FormRegistry = {
     delete FormRegistry.handlers[name];
   },
   get(name) {
-    if (!FormRegistry.hasOwnProperty(name)) {
-      throw new Error(`${name} form handler does not exist in the form registery`);
+    if (!FormRegistry.handlers.hasOwnProperty(name)) {
+      throw new Error(`${name} handler does not exist in the form registery`);
     }
     return FormRegistry.handlers[name];
   },

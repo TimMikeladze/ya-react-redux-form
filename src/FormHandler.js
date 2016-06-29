@@ -1,100 +1,75 @@
 import FormRegistry from './FormRegistry';
+import { submit } from './redux/modules';
+
+const isFunction = (func) => {
+  if (!(func instanceof Function)) {
+    throw new Error('Expected a function');
+  }
+};
+
+const runCallbacks = (callbacks, result, args) => {
+  let callbackResult = result;
+  if (Array.isArray) {
+    callbacks.forEach(value => {
+      callbackResult = value(callbackResult, args);
+    });
+  }
+  return callbackResult;
+};
 
 class FormHandler {
   constructor({ dispatch, getState, name }) {
     this.dispatch = dispatch;
     this.getState = getState;
     this.name = name;
+    this.onSubmit = [];
+    this.onSuccess = [];
+    this.onFailure = [];
   }
-  setValidator(validator) {
-    this.validator = validator;
-    return this;
+  addOnSubmit(onSubmit) {
+    isFunction(onSubmit);
+    this.onSubmit.push(onSubmit);
+  }
+  addOnSuccess(onSuccess) {
+    isFunction(onSuccess);
+    this.onSuccess.push(onSuccess);
+  }
+  addOnFailure(onFailure) {
+    isFunction(onFailure);
+    this.onFailure.push(onFailure);
   }
   setMethod(method) {
+    isFunction(method);
     this.method = method;
-    return this;
-  }
-  setOnSubmit(onSubmit) {
-    this.onSubmit = onSubmit;
-    return this;
-  }
-  setOnSuccess(onSuccess) {
-    this.onSuccess = onSuccess;
-    return this;
-  }
-  setOnFailure(onFailure) {
-    this.onFailure = onFailure;
-    return this;
-  }
-  setOnValidation(onValidation) {
-    this.onValidation = onValidation;
-    return this;
-  }
-  setSchema(schema) {
-    this.schema = schema;
-    return this;
   }
   submit() {
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
-      const form = (() => {
-        const formState = this.getState().yaForm[this.name];
-        const obj = {};
-        if (formState.hasOwnProperty('fields')) {
-          const fields = formState.fields;
-          for (const key in fields) {
-            if (key) {
-              obj[key] = fields[key].value;
-            }
-          }
-        }
-        return obj;
-      })();
+      const form = FormHandler.extractForm(this.name, this.getState);
+      this.dispatch(submit(form));
 
       const args = {
         name: this.name,
         form,
-        schema: this.schema,
         dispatch: this.dispatch,
         getState: this.getState,
       };
 
-     // Run onSubmit
-      if (this.onSubmit instanceof Function) {
-        const err = this.onSubmit(args);
-        if (err) {
-          this.onFailure(err, args);
-          reject({ err, args });
-        }
-      }
+      const onSubmitResult = runCallbacks(this.onSubmit, undefined, args);
 
-     // Validator the form
-      if (this.validator instanceof Function) {
-        const err = this.validator(args);
-        if (err) {
-          this.onFailure(err, args);
-          reject({ err, args });
-        }
-      }
-
-      if (this.method instanceof Function) {
-       // Promisify the callback results
+      if (onSubmitResult !== undefined) {
+        runCallbacks(this.onFailure, onSubmitResult, args);
+      } else if (this.method) {
         Promise.resolve(this.method(args)).then(result => {
-          if (this.onSuccess instanceof Function) {
-            this.onSuccess(result, args);
-          }
+          runCallbacks(this.onSuccess, result, args);
           resolve({ result, args });
         }).catch(err => {
-          if (this.onFailure instanceof Function) {
-            this.onFailure(err, args);
-          }
+          runCallbacks(this.onSuccess, err, args);
           reject({ err, args });
         });
       } else {
-        if (this.onSuccess instanceof Function) {
-          this.onSuccess(null, args);
-        }
-        resolve({ result: null, args });
+        runCallbacks(this.onSuccess, undefined, args);
+        resolve({ result: undefined, args });
       }
     });
 
@@ -102,6 +77,31 @@ class FormHandler {
   }
 }
 
-FormHandler.submit = (name) => FormRegistry.get(name).submit(name);
+FormHandler.getFormError = (name, state) => {
+  let form;
+  if (!state) {
+    const handler = FormRegistry.get(name);
+    form = handler.getState().yaForm;
+  } else {
+    form = state.yaForm;
+  }
+  return form.hasOwnProperty('error') ? form.error : null;
+};
+
+FormHandler.submit = (name) => FormRegistry.get(name).submit();
+
+FormHandler.extractForm = (name, getState) => {
+  const formState = getState().yaForm[name];
+  const obj = {};
+  if (formState.hasOwnProperty('fields')) {
+    const fields = formState.fields;
+    for (const key in fields) {
+      if (key) {
+        obj[key] = fields[key].value;
+      }
+    }
+  }
+  return obj;
+};
 
 export default FormHandler;

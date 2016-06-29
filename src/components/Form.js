@@ -9,22 +9,21 @@ class Form extends React.Component {
     super(props, context);
     this.store = props.store || context.store;
     const { dispatch, getState } = this.store;
-    const { name } = this.props;
-    this.submit = this.submit.bind(this);
+    const { name, onSubmit, onSuccess, onFailure, method } = this.props;
     this.handler = this.props.handler || new FormHandler({ dispatch, getState, name });
-
-    if (this.props.onSubmit) {
-      this.handler.setOnSubmit(this.props.onSubmit);
+    if (onSubmit) {
+      this.handler.addOnSubmit(onSubmit);
     }
-    if (this.props.method) {
-      this.handler.setMethod(this.props.method);
+    if (onSuccess) {
+      this.handler.addOnSuccess(this.props.method);
     }
-    if (this.props.onSuccess) {
-      this.handler.setOnSuccess(this.props.onSuccess);
+    if (onFailure) {
+      this.handler.addOnFailure(this.props.onSuccess);
     }
-    if (this.props.onFailure) {
-      this.handler.setOnFailure(this.props.onFailure);
+    if (method) {
+      this.handler.setMethod(method);
     }
+    this.submit = this.submit.bind(this);
   }
   getChildContext() {
     return {
@@ -41,7 +40,7 @@ class Form extends React.Component {
   }
   submit(event) {
     event.preventDefault();
-    this.handler.submit(this.props.name);
+    this.handler.submit();
   }
   render() {
     return (
