@@ -31,11 +31,11 @@ class Form extends React.Component {
     };
   }
   componentWillMount() {
-    FormRegistry.add(this.props.name, this.handler);
+    FormRegistry.instance.add(this.props.name, this.handler);
     this.store.dispatch(createForm(this.props.name));
   }
   componentWillUnmount() {
-    FormRegistry.remove(this.props.name);
+    FormRegistry.instance.remove(this.props.name);
     this.store.dispatch(removeForm(this.props.name));
   }
   submit(event) {

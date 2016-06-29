@@ -1,5 +1,5 @@
 import FormRegistry from './FormRegistry';
-import { submit } from './redux/modules';
+import { submitForm } from './redux/modules';
 
 const isFunction = (func) => {
   if (!(func instanceof Function)) {
@@ -46,7 +46,7 @@ class FormHandler {
     const promise = new Promise((resolve, reject) => {
      // Create an object from the current state containg a mapping between field names and values.
       const form = FormHandler.extractForm(this.name, this.getState);
-      this.dispatch(submit(form));
+      this.dispatch(submitForm(form));
 
       const args = {
         name: this.name,
@@ -88,7 +88,7 @@ FormHandler.getFormError = (name, state) => {
   return form.hasOwnProperty('error') ? form.error : null;
 };
 
-FormHandler.submit = (name) => FormRegistry.get(name).submit();
+FormHandler.submit = (name) => FormRegistry.instance.get(name).submit();
 
 FormHandler.extractForm = (name, getState) => {
   const formState = getState().yaForm[name];
