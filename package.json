@@ -1,6 +1,6 @@
 {
   "name": "ya-react-redux-form",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple wrapper around React input components to transparently integrate them with Redux",
   "main": "dist/index.js",
   "scripts": {
