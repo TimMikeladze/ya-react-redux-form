@@ -1,4 +1,13 @@
-# ya-react-form
-Yet Another React Form
+# Yet Another React Redux Form
 
-[![Circle CI](https://circleci.com/gh/spacedustio/ya-react-form.svg?style=svg)](https://circleci.com/gh/spacedustio/ya-react-form)
+*ya-react-redux-form*
+
+This package is a straight forward solution for form handling through React and/or Redux. It aims to be as transparent as possible, wrapping your input components to store their values in a Redux store, while leaving the door open for flexible implementation based on your requirements.
+
+## Installation
+
+```
+npm i -S ya-react-redux-form
+```
+
+## Usage

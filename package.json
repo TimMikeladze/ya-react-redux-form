@@ -1,25 +1,27 @@
 {
-  "name": "ya-react-form",
+  "name": "ya-react-redux-form",
   "version": "0.0.1",
-  "description": "Yet Another React Form",
+  "description": "",
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint src/ test/",
     "pretest": "npm run lint --silent",
     "test": "npm run testonly",
     "testonly": "mocha test/index.js",
-    "prepublish": "babel ./src --ignore test --out-dir ./dist",
-    "postinstall": "npm dedupe"
+    "build": "babel ./src --ignore test --out-dir ./dist",
+    "prepublish": "npm run build"
   },
   "author": "Tim Mikeladze",
   "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.9.0",
+    "lodash": "^4.13.1",
     "object-assign-deep": "0.0.4",
-    "react-redux": "^4.4.5",
     "react": "^15.0.2",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2",
     "redux-thunk": "^2.0.1",
-    "redux": "^3.5.2"
+    "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
