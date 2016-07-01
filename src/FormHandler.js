@@ -1,8 +1,9 @@
 import FormRegistry from './FormRegistry';
 import { submitForm } from './redux/modules';
+import _ from 'lodash';
 
 const isFunction = (func) => {
-  if (!(func instanceof Function)) {
+  if (!_.isFunction(func)) {
     throw new Error('Expected a function');
   }
 };
@@ -63,8 +64,8 @@ class FormHandler {
         Promise.resolve(this.method(args)).then(result => {
           runCallbacks(this.onSuccess, result, args);
           resolve({ result, args });
-        }).catch(err => {
-          runCallbacks(this.onSuccess, err, args);
+        }, err => {
+          runCallbacks(this.onFailure, err, args);
           reject({ err, args });
         });
       } else {
@@ -85,7 +86,19 @@ FormHandler.getFormError = (name, state) => {
   } else {
     form = state.yaForm;
   }
-  return form.hasOwnProperty('error') ? form.error : null;
+  return _.has(form, `${name}.error`) ? form[name].error : null;
+};
+
+FormHandler.getFieldError = (name, field, state) => {
+  let form;
+  if (!state) {
+    const handler = FormRegistry.get(name);
+    form = handler.getState().yaForm;
+  } else {
+    form = state.yaForm;
+  }
+
+  return _.has(form, `${name}.fields.${field}.error`) ? form[name].fields[field].error : null;
 };
 
 FormHandler.submit = (name) => FormRegistry.instance.get(name).submit();

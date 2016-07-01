@@ -1,6 +1,7 @@
 import React from 'react';
 import { addField, removeField, changeField } from '../redux/modules';
 import storeShape from '../util/storeShape';
+import FormHandler from '../FormHandler';
 
 class Wrapper extends React.Component {
   constructor(props, context) {
@@ -42,11 +43,9 @@ class Wrapper extends React.Component {
   render() {
     const formName = this.getFormName();
     const fieldName = this.props.element.props.name;
-    const state = this.store.getState();
     return React.cloneElement(this.props.element, {
       onChange: this.onChange,
-      // hasError: YaForm.hasFieldError(state, formName, fieldName),
-      // error: YaForm.getFieldError(state, formName, fieldName),
+      error: FormHandler.getFieldError(formName, fieldName, this.store.getState()),
     });
   }
 }
