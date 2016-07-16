@@ -15,10 +15,11 @@ class Wrapper extends React.Component {
     }
   }
   componentWillMount() {
-    const { name, value } = this.props.component.props; // eslint-disable-line react/prop-types
+    const { name } = this.props.component.props; // eslint-disable-line react/prop-types
     const form = this.getFormName();
-    if (!FormRegistry.instance.has(form)) {
-      this.store.dispatch(addField(form, name, { value }));
+    // Create the field only if it doesn't exist in the form state
+    if (!this.props.exists(form, name)) {
+      this.store.dispatch(addField(form, name));
     }
   }
   componentWillUnmount() {
@@ -42,7 +43,9 @@ class Wrapper extends React.Component {
     return this.props.component.props.form || this.context.yaForm.form;
   }
   render() {
-    const { value, error, onChangeProp, errorProp, valueProp, onChange, component } = this.props;
+    const {
+      value, error, onChangeProp, errorProp, valueProp, onChange, valueTransform, component,
+    } = this.props;
     const formName = this.getFormName();
     const { name } = component.props;
     const wrap = (handler, prop) => (...args) => {
@@ -55,12 +58,17 @@ class Wrapper extends React.Component {
       return prop;
     };
 
-    const newProps = {
-      [onChangeProp]: wrap(onChange, component.props[onChangeProp]),
-      [valueProp]: value(formName, name),
-      [errorProp]: error(formName, name),
-    };
+    const newProps = {};
 
+    if (onChangeProp) {
+      newProps[onChangeProp] = wrap(onChange, component.props[onChangeProp]);
+    }
+    if (valueProp) {
+      newProps[valueProp] = valueTransform(value(formName, name));
+    }
+    if (errorProp) {
+      newProps[errorProp] = error(formName, name);
+    }
 
     return React.cloneElement(component, newProps);
   }
@@ -74,13 +82,15 @@ Wrapper.propTypes = {
   valueProp: React.PropTypes.string,
   onChange: React.PropTypes.func,
   value: React.PropTypes.func,
-  error: React.PropTypes.error,
+  error: React.PropTypes.func,
+  exists: React.PropTypes.func,
+  valueTransform: React.PropTypes.func,
+  errorTransform: React.PropTypes.func,
 };
 
 Wrapper.defaultProps = {
-  onChangeProp: 'onChange',
-  errorProp: 'error',
-  valueProp: 'value',
+  valueTransform: (value) => value,
+  errorTransform: (error) => error,
   onChange: ({ store, formName, name, args }) => {
     store.dispatch(
       changeField(formName, name, { value: args[0].target.value })
@@ -102,6 +112,7 @@ const mapStateToProps = (state) => ({
       state.yaForm[formName].fields.hasOwnProperty(name)
         ? state.yaForm[formName].fields[name].error
         : ''),
+  exists: (formName, name) => state.yaForm[formName].fields.hasOwnProperty(name),
 });
 
 export default connect(mapStateToProps, null)(Wrapper);
