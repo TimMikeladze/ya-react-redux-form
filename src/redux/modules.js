@@ -11,12 +11,24 @@ const SET_FIELD_ERROR = 'ya-react-form/SET_FIELD_ERROR';
 const CLEAR_FIELD_ERROR = 'ya-react-form/CLEAR_FIELD_ERROR';
 const SUBMIT_FORM = 'ya-react-form/SUBMIT_FORM';
 
+const defaultFormState = {
+  fields: {
+
+  },
+  error: '',
+};
+
+const defaultFieldState = {
+  value: '',
+  error: '',
+};
+
 const reducer = (state = {}, action) => {
   let nextState;
   switch (action.type) {
     case CREATE_FORM:
       nextState = objectAssignDeep({}, state, {
-        [action.payload.name]: action.payload.form || {},
+        [action.payload.name]: objectAssignDeep({}, defaultFormState, action.payload.form),
       });
       break;
     case REMOVE_FORM:
@@ -27,7 +39,7 @@ const reducer = (state = {}, action) => {
       nextState = objectAssignDeep({}, state, {
         [action.payload.form]: {
           fields: {
-            [action.payload.fieldName]: action.payload.field || { value: '' },
+            [action.payload.fieldName]: objectAssignDeep({}, defaultFieldState, action.payload.field),
           },
         },
       });
@@ -45,13 +57,10 @@ const reducer = (state = {}, action) => {
       nextState = objectAssignDeep({}, state, {
         [action.payload.form]: {
           fields: {
-            [action.payload.fieldName]: action.payload.field,
+            [action.payload.fieldName]: objectAssignDeep({}, defaultFieldState, action.payload.field),
           },
         },
       });
-      if (!action.payload.preserveError) {
-        delete nextState[action.payload.form].fields[action.payload.fieldName].error;
-      }
       break;
     case SET_FORM_ERROR:
       nextState = objectAssignDeep({}, state, {
@@ -62,7 +71,7 @@ const reducer = (state = {}, action) => {
       break;
     case CLEAR_FORM_ERROR:
       nextState = objectAssignDeep({}, state);
-      delete nextState[action.payload.form].error;
+      nextState[action.payload.form].error = '';
       return nextState;
     case SET_FIELD_ERROR:
       nextState = objectAssignDeep({}, state, {
@@ -77,7 +86,7 @@ const reducer = (state = {}, action) => {
       return nextState;
     case CLEAR_FIELD_ERROR:
       nextState = objectAssignDeep({}, state);
-      delete nextState[action.payload.form].fields[action.payload.field].error;
+      nextState[action.payload.form].fields[action.payload.field].error = '';
       return nextState;
     case SUBMIT_FORM:
     default:
@@ -145,14 +154,13 @@ const removeField = (form, fieldName) =>
 
 export { removeField };
 
-const changeField = (form, fieldName, field, preserveError = false) => (
+const changeField = (form, fieldName, field) => (
   {
     type: CHANGE_FIELD,
     payload: {
       form,
       fieldName,
       field,
-      preserveError,
     },
   }
 );

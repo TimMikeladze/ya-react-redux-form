@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { addField, removeField, changeField } from '../redux/modules';
 import storeShape from '../util/storeShape';
 import FormHandler from '../FormHandler';
@@ -42,14 +43,14 @@ class Wrapper extends React.Component {
     return this.props.component.props.form || this.context.yaForm.form;
   }
   render() {
-    const { onChangeProp, errorProp, valueProp, onChange, component } = this.props;
+    const { value, error, onChangeProp, errorProp, valueProp, onChange, component } = this.props;
     const formName = this.getFormName();
-
+    const { name } = component.props;
     const wrap = (handler, prop) => (...args) => {
       handler({
         store: this.store,
         formName,
-        name: component.props.name,
+        name,
         args: { ...args },
       });
       return prop;
@@ -57,11 +58,10 @@ class Wrapper extends React.Component {
 
     const newProps = {
       [onChangeProp]: wrap(onChange, component.props[onChangeProp]),
-      [errorProp]: FormHandler.getFieldError(formName, component.props.fieldName,
-         this.store.getState()),
-      [valueProp]: FormHandler.getFieldValue(formName, component.props.fieldName,
-          this.store.getState()),
+      [valueProp]: value(formName, name),
+      [errorProp]: error(formName, name),
     };
+
 
     return React.cloneElement(component, newProps);
   }
@@ -74,6 +74,8 @@ Wrapper.propTypes = {
   errorProp: React.PropTypes.string,
   valueProp: React.PropTypes.string,
   onChange: React.PropTypes.func,
+  value: React.PropTypes.func,
+  error: React.PropTypes.error,
 };
 
 Wrapper.defaultProps = {
@@ -92,4 +94,15 @@ Wrapper.contextTypes = {
   yaForm: React.PropTypes.object,
 };
 
-export default Wrapper;
+const mapStateToProps = (state) => ({
+  value: (formName, name) => (
+    state.yaForm[formName].fields.hasOwnProperty(name)
+      ? state.yaForm[formName].fields[name].value
+      : ''),
+  error: (formName, name) => (
+      state.yaForm[formName].fields.hasOwnProperty(name)
+        ? state.yaForm[formName].fields[name].error
+        : ''),
+});
+
+export default connect(mapStateToProps, null)(Wrapper);
