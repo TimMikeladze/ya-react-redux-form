@@ -1,6 +1,7 @@
 import React from 'react';
 import Wrapper from './components/Wrapper';
 
-const wrap = (field) => <Wrapper element={field} />;
+const wrap = (field, options) =>
+  <Wrapper element={field} {...options } />;
 
 export default wrap;
