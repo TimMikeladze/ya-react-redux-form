@@ -1,4 +1,5 @@
 import React from 'react';
+import filterProps from 'react-valid-props';
 import { createForm, removeForm } from '../redux/modules';
 import storeShape from '../util/storeShape';
 import FormHandler from '../FormHandler';
@@ -27,16 +28,23 @@ class Form extends React.Component {
   }
   getChildContext() {
     return {
-      form: this.props.name,
+      yaForm: {
+        form: this.props.name,
+        autoRemove: this.props.autoRemove,
+      },
     };
   }
   componentWillMount() {
-    FormRegistry.instance.add(this.props.name, this.handler);
-    this.store.dispatch(createForm(this.props.name));
+    if (!FormRegistry.instance.has(this.props.name)) {
+      FormRegistry.instance.add(this.props.name, this.handler);
+      this.store.dispatch(createForm(this.props.name));
+    }
   }
   componentWillUnmount() {
-    FormRegistry.instance.remove(this.props.name);
-    this.store.dispatch(removeForm(this.props.name));
+    if (this.props.autoRemove && FormRegistry.instance.has(this.props.name)) {
+      FormRegistry.instance.remove(this.props.name);
+      this.store.dispatch(removeForm(this.props.name));
+    }
   }
   submit(event) {
     event.preventDefault();
@@ -44,9 +52,7 @@ class Form extends React.Component {
   }
   render() {
     return (
-        <form name={this.props.name} onSubmit={this.submit}
-          className={this.props.className ? this.props.className : 'yaForm'}
-        >
+        <form {...filterProps(this.props)} onSubmit={this.onSubmit}>
           {this.props.children}
         </form>
     );
@@ -57,7 +63,7 @@ Form.propTypes = {
   store: storeShape,
   name: React.PropTypes.string.isRequired,
   children: React.PropTypes.node,
-  className: React.PropTypes.string,
+  autoRemove: React.PropTypes.bool,
   handler: React.PropTypes.object,
   method: React.PropTypes.func,
   onSubmit: React.PropTypes.func,
@@ -65,12 +71,19 @@ Form.propTypes = {
   onFailure: React.PropTypes.func,
 };
 
+Form.defaultProps = {
+  autoRemove: true,
+};
+
 Form.contextTypes = {
   store: storeShape,
 };
 
 Form.childContextTypes = {
-  form: React.PropTypes.string.isRequired,
+  yaForm: React.PropTypes.shape({
+    form: React.PropTypes.string.isRequired,
+    autoRemove: React.PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default Form;

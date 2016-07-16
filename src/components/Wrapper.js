@@ -2,6 +2,7 @@ import React from 'react';
 import { addField, removeField, changeField } from '../redux/modules';
 import storeShape from '../util/storeShape';
 import FormHandler from '../FormHandler';
+import FormRegistry from '../FormRegistry';
 
 class Wrapper extends React.Component {
   constructor(props, context) {
@@ -16,28 +17,32 @@ class Wrapper extends React.Component {
   componentWillMount() {
     const { name, value } = this.props.component.props; // eslint-disable-line react/prop-types
     const form = this.getFormName();
-    this.store.dispatch(addField(form, name, { value }));
+    if (!FormRegistry.instance.has(form)) {
+      this.store.dispatch(addField(form, name, { value }));
+    }
   }
   componentWillUnmount() {
-    const { name } = this.props.component.props; // eslint-disable-line react/prop-types
-    const form = this.getFormName();
-    // Hacky way to handle race condition of form being removed first resulting in the removal
-    // of all the fields under it.
-    try {
-      this.store.dispatch(removeField(form, name));
-    } catch (e) { // eslint-disable-line no-empty
+    if (this.context.yaForm.autoRemove) {
+      const { name } = this.props.component.props; // eslint-disable-line react/prop-types
+      const form = this.getFormName();
+      // Hacky way to handle race condition of form being removed first resulting in the removal
+      // of all the fields under it.
+      try {
+        this.store.dispatch(removeField(form, name));
+      } catch (e) { // eslint-disable-line no-empty
+      }
     }
   }
   getFormName() {
     if ((this.props.component.props.form === undefined
         || this.props.component.props.form.length === 0)
-          && (this.context.form === undefined || this.context.form.length === 0)) {
+          && (this.context.yaForm.form === undefined || this.context.yaForm.form.length === 0)) {
       throw new Error('A form prop or a form context type must be provided to YaWrap');
     }
-    return this.props.component.props.form || this.context.form;
+    return this.props.component.props.form || this.context.yaForm.form;
   }
   render() {
-    const { onChangeProp, errorProp, onChange, component } = this.props;
+    const { onChangeProp, errorProp, valueProp, onChange, component } = this.props;
     const formName = this.getFormName();
 
     const wrap = (handler, prop) => (...args) => {
@@ -54,6 +59,8 @@ class Wrapper extends React.Component {
       [onChangeProp]: wrap(onChange, component.props[onChangeProp]),
       [errorProp]: FormHandler.getFieldError(formName, component.props.fieldName,
          this.store.getState()),
+      [valueProp]: FormHandler.getFieldValue(formName, component.props.fieldName,
+          this.store.getState()),
     };
 
     return React.cloneElement(component, newProps);
@@ -65,12 +72,14 @@ Wrapper.propTypes = {
   component: React.PropTypes.element.isRequired,
   onChangeProp: React.PropTypes.string,
   errorProp: React.PropTypes.string,
+  valueProp: React.PropTypes.string,
   onChange: React.PropTypes.func,
 };
 
 Wrapper.defaultProps = {
   onChangeProp: 'onChange',
   errorProp: 'error',
+  valueProp: 'value',
   onChange: ({ store, formName, name, args }) => {
     store.dispatch(
       changeField(formName, name, { value: args[0].target.value })
@@ -80,7 +89,7 @@ Wrapper.defaultProps = {
 
 Wrapper.contextTypes = {
   store: storeShape,
-  form: React.PropTypes.string,
+  yaForm: React.PropTypes.object,
 };
 
 export default Wrapper;

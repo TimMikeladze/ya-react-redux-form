@@ -86,7 +86,19 @@ FormHandler.getFormError = (name, state) => {
   } else {
     form = state.yaForm;
   }
-  return _.has(form, `${name}.error`) ? form[name].error : null;
+  return _.has(form, `${name}.error`) ? form[name].error : '';
+};
+
+FormHandler.getFieldValue = (name, field, state) => {
+  let form;
+  if (!state) {
+    const handler = FormRegistry.get(name);
+    form = handler.getState().yaForm;
+  } else {
+    form = state.yaForm;
+  }
+
+  return _.has(form, `${name}.fields.${field}.value`) ? form[name].fields[field].value : undefined;
 };
 
 FormHandler.getFieldError = (name, field, state) => {
@@ -98,7 +110,7 @@ FormHandler.getFieldError = (name, field, state) => {
     form = state.yaForm;
   }
 
-  return _.has(form, `${name}.fields.${field}.error`) ? form[name].fields[field].error : null;
+  return _.has(form, `${name}.fields.${field}.error`) ? form[name].fields[field].error : '';
 };
 
 FormHandler.submit = (name) => FormRegistry.instance.get(name).submit();

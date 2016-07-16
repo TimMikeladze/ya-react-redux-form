@@ -12,8 +12,11 @@ if (!hasSymbol) {
     remove(name) {
       delete this.handlers[name];
     },
+    has(name) {
+      return this.handlers.hasOwnProperty(name);
+    },
     get(name) {
-      if (!this.handlers.hasOwnProperty(name)) {
+      if (!this.has(name)) {
         throw new Error(`${name} handler does not exist in the form registry`);
       }
       return this.handlers[name];
