@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { isFunction } from 'lodash';
 import { addField, removeField, changeField } from '../redux/modules';
 import storeShape from '../util/storeShape';
 import FormRegistry from '../FormRegistry';
@@ -55,7 +56,7 @@ class Wrapper extends React.Component {
         name,
         args: { ...args },
       });
-      return prop;
+      return isFunction(prop) ? prop(...args) : prop;
     };
 
     const newProps = {};
