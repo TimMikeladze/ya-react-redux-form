@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { addField, removeField, changeField } from '../redux/modules';
 import storeShape from '../util/storeShape';
-import FormHandler from '../FormHandler';
 import FormRegistry from '../FormRegistry';
 
 class Wrapper extends React.Component {
@@ -38,7 +37,7 @@ class Wrapper extends React.Component {
     if ((this.props.component.props.form === undefined
         || this.props.component.props.form.length === 0)
           && (this.context.yaForm.form === undefined || this.context.yaForm.form.length === 0)) {
-      throw new Error('A form prop or a form context type must be provided to YaWrap');
+      throw new Error('A form prop or a yaForm context must be provided to the wrapped component');
     }
     return this.props.component.props.form || this.context.yaForm.form;
   }
