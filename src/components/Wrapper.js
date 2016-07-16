@@ -37,11 +37,11 @@ class Wrapper extends React.Component {
     return this.props.element.props.form || this.context.form;
   }
   render() {
-    const { handlerMap, handlers, element } = this.props;
+    const { onChangeProp, errorProp, onChange, element } = this.props;
     const formName = this.getFormName();
 
     const wrap = (handler, prop) => (...args) => {
-      handlers[handler]({
+      handler({
         store: this.store,
         formName,
         name: element.props.name,
@@ -50,47 +50,31 @@ class Wrapper extends React.Component {
       return prop;
     };
 
-    const wrappedProps = {
-      [handlerMap.onChange]: wrap('onChange', element.props[handlerMap.onChange]),
+    const newProps = {
+      [onChangeProp]: wrap(onChange, element.props[onChangeProp]),
+      [errorProp]: FormHandler.getFieldError(formName, element.props.fieldName,
+         this.store.getState()),
     };
 
-    return React.cloneElement(element, wrappedProps);
-
-    /*
-    const formName = this.getFormName();
-    const fieldName = this.props.element.props.name;
-    return React.cloneElement(this.props.element, {
-      onChange: this.onChange,
-      error: FormHandler.getFieldError(formName, fieldName, this.store.getState()),
-    });
-  }*/
+    return React.cloneElement(element, newProps);
   }
 }
 
 Wrapper.propTypes = {
   store: storeShape,
   element: React.PropTypes.element.isRequired,
-  handlerMap: React.PropTypes.shape({
-    onChange: React.PropTypes.string,
-    error: React.PropTypes.string,
-  }),
-  handlers: React.PropTypes.shape({
-    onChange: React.PropTypes.func,
-    error: React.PropTypes.func,
-  }),
+  onChangeProp: React.PropTypes.string,
+  errorProp: React.PropTypes.string,
+  onChange: React.PropTypes.func,
 };
 
 Wrapper.defaultProps = {
-  handlerMap: {
-    onChange: 'onChange',
-    error: 'error',
-  },
-  handlers: {
-    onChange: ({ store, formName, name, args }) => {
-      store.dispatch(
-        changeField(formName, name, { value: args[0].target.value })
-      );
-    },
+  onChangeProp: 'onChange',
+  errorProp: 'error',
+  onChange: ({ store, formName, name, args }) => {
+    store.dispatch(
+      changeField(formName, name, { value: args[0].target.value })
+    );
   },
 };
 
