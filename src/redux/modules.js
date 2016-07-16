@@ -39,7 +39,8 @@ const reducer = (state = {}, action) => {
       nextState = objectAssignDeep({}, state, {
         [action.payload.form]: {
           fields: {
-            [action.payload.fieldName]: objectAssignDeep({}, defaultFieldState, action.payload.field),
+            [action.payload.fieldName]: objectAssignDeep({}, defaultFieldState,
+              action.payload.field),
           },
         },
       });
@@ -57,7 +58,8 @@ const reducer = (state = {}, action) => {
       nextState = objectAssignDeep({}, state, {
         [action.payload.form]: {
           fields: {
-            [action.payload.fieldName]: objectAssignDeep({}, defaultFieldState, action.payload.field),
+            [action.payload.fieldName]: objectAssignDeep({}, defaultFieldState,
+              action.payload.field),
           },
         },
       });
