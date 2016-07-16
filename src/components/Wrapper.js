@@ -9,17 +9,17 @@ class Wrapper extends React.Component {
     this.store = props.store || context.store;
     this.getFormName = this.getFormName.bind(this);
 
-    if (!this.props.element.props.name) {
+    if (!this.props.component.props.name) {
       throw new Error('Must provide a name prop to your component.');
     }
   }
   componentWillMount() {
-    const { name, value } = this.props.element.props; // eslint-disable-line react/prop-types
+    const { name, value } = this.props.component.props; // eslint-disable-line react/prop-types
     const form = this.getFormName();
     this.store.dispatch(addField(form, name, { value }));
   }
   componentWillUnmount() {
-    const { name } = this.props.element.props; // eslint-disable-line react/prop-types
+    const { name } = this.props.component.props; // eslint-disable-line react/prop-types
     const form = this.getFormName();
     // Hacky way to handle race condition of form being removed first resulting in the removal
     // of all the fields under it.
@@ -29,40 +29,40 @@ class Wrapper extends React.Component {
     }
   }
   getFormName() {
-    if ((this.props.element.props.form === undefined
-        || this.props.element.props.form.length === 0)
+    if ((this.props.component.props.form === undefined
+        || this.props.component.props.form.length === 0)
           && (this.context.form === undefined || this.context.form.length === 0)) {
       throw new Error('A form prop or a form context type must be provided to YaWrap');
     }
-    return this.props.element.props.form || this.context.form;
+    return this.props.component.props.form || this.context.form;
   }
   render() {
-    const { onChangeProp, errorProp, onChange, element } = this.props;
+    const { onChangeProp, errorProp, onChange, component } = this.props;
     const formName = this.getFormName();
 
     const wrap = (handler, prop) => (...args) => {
       handler({
         store: this.store,
         formName,
-        name: element.props.name,
+        name: component.props.name,
         args: { ...args },
       });
       return prop;
     };
 
     const newProps = {
-      [onChangeProp]: wrap(onChange, element.props[onChangeProp]),
-      [errorProp]: FormHandler.getFieldError(formName, element.props.fieldName,
+      [onChangeProp]: wrap(onChange, component.props[onChangeProp]),
+      [errorProp]: FormHandler.getFieldError(formName, component.props.fieldName,
          this.store.getState()),
     };
 
-    return React.cloneElement(element, newProps);
+    return React.cloneElement(component, newProps);
   }
 }
 
 Wrapper.propTypes = {
   store: storeShape,
-  element: React.PropTypes.element.isRequired,
+  component: React.PropTypes.element.isRequired,
   onChangeProp: React.PropTypes.string,
   errorProp: React.PropTypes.string,
   onChange: React.PropTypes.func,
